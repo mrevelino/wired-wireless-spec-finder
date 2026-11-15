@@ -88,11 +88,11 @@ window.dash = (function () {
 .sf-brandbar .b1 { background: var(--sf-cisco); } .sf-brandbar .b2 { background: #ffffff; opacity: .6; } .sf-brandbar .b3 { background: var(--sf-hpe); }
 .sf input[type=checkbox] { accent-color: var(--sf-cisco-deep); }
 .sf .dash-select { background-color: #ffffff; color: var(--color-fg); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); }
-#requirements, #matches { border-top: 3px solid var(--sf-cisco); }
+#requirements { border-top: 3px solid var(--sf-cisco); }
 #compare { border-top: 3px solid var(--sf-hpe); }
 .sf h2 { color: var(--color-fg); }
-#requirements h2::before, #matches h2::before, #compare h2::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 8px; vertical-align: 1px; }
-#requirements h2::before, #matches h2::before { background: var(--sf-cisco); }
+#requirements h2::before, #compare h2::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 8px; vertical-align: 1px; }
+#requirements h2::before { background: var(--sf-cisco); }
 #compare h2::before { background: var(--sf-hpe); }
 .sf h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
 .sf-lede { margin: var(--cds-gap-xs) 0 0; color: var(--color-fg-muted); }
@@ -200,10 +200,6 @@ window.dash = (function () {
     <button type="button" class="sf-tab is-active" data-target="requirements" aria-current="true">
       <span class="sf-tab-mark sf-mark-blue" aria-hidden="true"></span>
       <span class="sf-tab-label">Switches</span>
-    </button>
-    <button type="button" class="sf-tab" data-target="matches">
-      <span class="sf-tab-mark sf-mark-blue" aria-hidden="true"></span>
-      <span class="sf-tab-label">Matching models</span>
       <b class="sf-tab-badge" data-draw="navcount">—</b>
     </button>
     <button type="button" class="sf-tab" data-target="compare">
@@ -237,7 +233,7 @@ window.dash = (function () {
   <section class="sf-card" id="requirements" aria-labelledby="req-h">
     <div class="sf-bar">
       <h2 id="req-h">Switches</h2>
-      <button type="button" class="sf-btn" id="f-reset">Reset filters</button>
+      <button type="button" class="sf-btn" id="f-reset">Reset switch filters</button>
     </div>
     <div class="sf-filters">
       <div class="sf-field sf-wide">
@@ -381,13 +377,7 @@ window.dash = (function () {
       </div>
     </div>
     <div class="sf-chips" data-draw="vendorsum" aria-label="Matches by vendor"></div>
-  </section>
-
-  <section class="sf-card" id="matches" aria-labelledby="match-h">
-    <div class="sf-bar">
-      <h2 id="match-h">Matching models</h2>
-      <p class="sf-muted">Tick up to 4 models to compare them below. Click a column heading to sort.</p>
-    </div>
+    <p class="sf-muted" id="matches">Tick up to 4 switches to compare them below. Click a column heading to sort.</p>
     <div class="sf-scroll">
       <table class="sf-table" id="results-table" data-source="specs" data-row-key="model">
         <thead>
@@ -674,13 +664,13 @@ window.sfRedraw = function () { ['results', 'count', 'vendorsum', 'navcount'].fo
 
 (function () {
   const redraw = () => window.sfRedraw();
-  document.querySelectorAll('#requirements input, #requirements select').forEach((el) => {
+  document.querySelectorAll('#requirements .sf-filters input, #requirements .sf-filters select').forEach((el) => {
     el.addEventListener('input', redraw);
     el.addEventListener('change', redraw);
   });
   const reset = document.getElementById('f-reset');
   if (reset) reset.addEventListener('click', () => {
-    document.querySelectorAll('#requirements select, #requirements input[type=search], #requirements input[type=number]').forEach((el) => { el.value = ''; });
+    document.querySelectorAll('#requirements .sf-filters select, #requirements input[type=search], #requirements input[type=number]').forEach((el) => { el.value = ''; });
     document.querySelectorAll('.sf-vendor').forEach((c) => { c.checked = true; });
     document.querySelectorAll('.sf-feat').forEach((c) => { c.checked = false; });
     const fv = document.getElementById('f-verified');
@@ -709,7 +699,7 @@ window.sfRedraw = function () { ['results', 'count', 'vendorsum', 'navcount'].fo
     return se.scrollTop > 0 && se.scrollHeight - (se.scrollTop + window.innerHeight) < 8;
   };
   /* The section in view is the last one whose top has passed 30% of the window height. */
-  const ids = ['requirements', 'matches', 'compare', 'aps', 'apcompare'];
+  const ids = ['requirements', 'compare', 'aps', 'apcompare'];
   let ticking = false;
   const update = () => {
     ticking = false;
