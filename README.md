@@ -14,6 +14,13 @@ and wireless access points:
 - **Juniper (HPE Mist)** AP17 / AP27 / AP36 / AP47 / AP66 (Wi-Fi 7), AP24 / AP45 / AP64 (Wi-Fi 6E), AP32 / AP33 / AP43 (Wi-Fi 6)
 - **Fortinet FortiAP** 221K / 231K / 241K / 23JK / 244K / 222KL / 441K (Wi-Fi 7), 234G / 432G (outdoor Wi-Fi 6E)
 
+and wireless controllers, on-premises and cloud:
+
+- **Cisco** Wireless CW9800H1 / H2 / M / L, Catalyst 9800-80 / 40 / L, 9800-CL (private and public cloud), Embedded Wireless Controller on APs, Meraki cloud
+- **HPE Aruba Networking** 9240 Campus Gateway (base, Silver, Gold), 9106 / 9114 Hybrid Gateways, HPE Aruba Networking Central (cloud)
+- **Juniper (HPE Mist)** Mist cloud, plus Mist Edge ME-X1 / X5 / X10 on-site appliances (Juniper has no on-premises controller)
+- **Fortinet** FortiGate wireless controller by series (30/40 up to 4000), FortiGate-VM, FortiManagement Cloud
+
 **Live page:** https://mrevelino.github.io/wired-wireless-spec-finder/
 
 ![Page views today / all time](https://hits.sh/mrevelino.github.io/wired-wireless-spec-finder.svg?view=today-total&label=Page%20views&color=049fd9&labelColor=0d274d)
@@ -28,6 +35,7 @@ The page-view badge (also at the foot of the live page) comes from [hits.sh](htt
 - Sort the results table, tick up to four models and compare them side by side. The best value in each numeric row is highlighted.
 - Show only rows fully verified against the vendor datasheet.
 - **Access points:** filter by vendor, Wi-Fi generation, indoor / wall plate / outdoor, data rate, uplink speed, 4x4 radios, 6 GHz, dual uplinks, full function on 802.3at PoE, BLE/IoT and USB; sort and compare up to four.
+- **Wireless controllers:** filter by vendor, on-premises or cloud, appliance / virtual / embedded / cloud service, number of APs, throughput and redundant power.
 - **Export:** download everything that matches your filters, plus your comparisons, as an Excel workbook (one sheet per table) or a PDF report. Use the Export buttons in the side panel.
 
 ## Data
@@ -40,6 +48,9 @@ The page-view badge (also at the foot of the live page) comes from [hits.sh](htt
 | [`data/access_points.json`](data/access_points.json) | 44 access points (`rows`) |
 | [`data/access_points.csv`](data/access_points.csv) | The same AP rows as CSV |
 | [`scripts/make_aps.py`](scripts/make_aps.py) | Generates the AP JSON: `python scripts/make_aps.py data/access_points.json` |
+| [`data/wireless_controllers.json`](data/wireless_controllers.json) | 33 wireless controllers and cloud services (`rows`) |
+| [`data/wireless_controllers.csv`](data/wireless_controllers.csv) | The same controller rows as CSV |
+| [`scripts/make_wlc.py`](scripts/make_wlc.py) | Generates the controller JSON: `python scripts/make_wlc.py data/wireless_controllers.json` |
 
 Key columns: `ports`, `port_speed`, `port_max_gbps`, `uplinks`, `uplink_max_gbps`, `poe`, `poe_w_port`, `poe_budget_w`, `switching_gbps`, `fwd_mpps`, `dram_gb`, `flash_gb`, `mac`, `ipv4_routes`, `stacking`, `stack_max`, the feature flags (`ospf`, `bgp`, `evpn_vxlan`, `macsec`, `mpls`, `redundant_psu`), plus `verified`, `notes` and `datasheet`. An empty value means the datasheet does not state it.
 
@@ -53,6 +64,8 @@ Checked on 13 November 2026 against:
 - Fortinet FortiSwitch datasheets: [Secure Access](https://www.fortinet.com/content/dam/fortinet/assets/data-sheets/pdf/fortiswitch-secure-access-series.pdf), [Secure Campus](https://www.fortinet.com/content/dam/fortinet/assets/data-sheets/pdf/fortiswitch-campus-series.pdf), [Rugged](https://www.fortinet.com/content/dam/fortinet/assets/data-sheets/FortiSwitchRugged.pdf)
 
 Access points were checked on 14 November 2026 against the Cisco access point datasheets on cisco.com, the HPE Aruba Networking and HPE Mist (Juniper) AP datasheets on hpe.com, and the [FortiAP series datasheet](https://www.fortinet.com/content/dam/fortinet/assets/data-sheets/pdf/fortiap-series.pdf). 43 of 44 AP rows are verified; the Juniper AP45's uplink speed could not be read from its datasheet. Max power is blank where the datasheet gives no figure.
+
+Wireless controllers were checked on 15 November 2026 against the Cisco controller datasheets on cisco.com, the HPE Aruba Networking 9200 and 9100 gateway QuickSpecs, HPE's Mist Edge ME-X1 documentation and Fortinet's [Wireless Product Matrix](https://www.fortinet.com/content/dam/fortinet/assets/data-sheets/Fortinet_Wireless_Product_Matrix.pdf) (November 2026). Cloud services (Meraki, Central, Mist, FortiManagement Cloud) publish no capacity figures, so those rows are partly verified. Mist Edge ME-X5 and ME-X10 are not verified: their hardware pages are no longer online and other sources disagree. FortiGate capacity is given per series.
 
 Each switch row's `verified` field says how much was confirmed:
 

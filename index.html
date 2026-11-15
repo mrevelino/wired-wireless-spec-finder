@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Enterprise Campus Wired and Wireless Spec Finder</title>
-<meta name="description" content="Search and compare Cisco Catalyst, HPE Aruba CX, Juniper EX and Fortinet FortiSwitch switches and Cisco, Aruba, Juniper Mist and FortiAP access points; export to Excel or PDF.">
+<meta name="description" content="Search and compare Cisco Catalyst, HPE Aruba CX, Juniper EX and Fortinet FortiSwitch switches, Cisco, Aruba, Juniper Mist and FortiAP access points, and on-premises and cloud wireless controllers; export to Excel or PDF.">
 <style>
 :root {
   --color-fg: #17202b; --color-fg-muted: #5b6675; --color-bg: #f6f7f9; --color-panel: #ffffff;
@@ -33,7 +33,7 @@ html, body { margin: 0; background: #f4f7fa; color: var(--color-fg); font: 14px/
 <script>
 /* Minimal stand-in for the Claude dashboard runtime: data(), calc(), draw(), colors. */
 window.dash = (function () {
-  const store = { specs: { status: 'loading', data: [] }, aps: { status: 'loading', data: [] } };
+  const store = { specs: { status: 'loading', data: [] }, aps: { status: 'loading', data: [] }, wlc: { status: 'loading', data: [] } };
   const calcs = {}, draws = {};
   function data(id) {
     const c = calcs[id];
@@ -117,6 +117,14 @@ window.dash = (function () {
 .sf-tab-top { margin-top: 6px; border-top: 1px solid var(--color-border-line); border-radius: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
 .sf-tab-top:hover { border-radius: var(--cds-radius); }
 .sf [hidden] { display: none !important; }
+#wlc { border-top: 3px solid var(--sf-cisco); }
+#wlc h2::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 8px; vertical-align: 1px; background: var(--sf-cisco); }
+.sf-notes-box { border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); }
+.sf-notes-box summary { cursor: pointer; font-weight: var(--cds-font-weight-medium); }
+.sf-notes-list { display: grid; grid-template-columns: minmax(140px, 260px) minmax(0, 1fr); gap: 6px 16px; margin: var(--cds-gap-md) 0 0; font-size: var(--cds-font-size-caption); }
+.sf-notes-list dt { font-weight: var(--cds-font-weight-medium); }
+.sf-notes-list dd { margin: 0; color: var(--color-fg-muted); }
+@media (max-width: 600px) { .sf-notes-list { grid-template-columns: minmax(0, 1fr); } .sf-notes-list dd { margin-bottom: 8px; } }
 .sf-side-sub { margin-top: 8px; padding-top: 10px; border-top: 1px solid var(--color-border-line); }
 .sf-export { display: grid; gap: 6px; margin-top: 8px; padding-top: 10px; border-top: 1px solid var(--color-border-line); }
 .sf-export-btn { width: 100%; text-align: left; font-size: var(--cds-font-size-caption); }
@@ -189,7 +197,7 @@ window.dash = (function () {
   <header id="sf-head" class="sf-head">
     <h1>Enterprise Campus Wired and Wireless Spec Finder</h1>
     <div class="sf-brandbar" aria-hidden="true"><span class="b1"></span><span class="b2"></span><span class="b3"></span></div>
-    <p class="sf-lede">Compare campus switches and Wi-Fi access points from Cisco, HPE Aruba, Juniper and Fortinet, checked against each vendor's datasheet. <b data-draw="count">—</b> of <b data-draw="total" data-source="total_models">—</b> switches and <b data-draw="apcount">—</b> of <b data-draw="aptotal" data-source="total_aps">—</b> access points match your filters.</p>
+    <p class="sf-lede">Compare campus switches, Wi-Fi access points and wireless controllers from Cisco, HPE Aruba, Juniper and Fortinet, checked against each vendor's datasheet. <b data-draw="count">—</b> of <b data-draw="total" data-source="total_models">—</b> switches, <b data-draw="apcount">—</b> of <b data-draw="aptotal" data-source="total_aps">—</b> access points, and <b data-draw="wlccount">—</b> of <b data-draw="wlctotal" data-source="total_wlc">—</b> wireless controllers match your filters.</p>
   </header>
 
   <p class="sf-note" id="sf-caveat">Checked on 13 Nov 2026 against the Cisco datasheets, HPE Aruba QuickSpecs, HPE-hosted Juniper datasheets and Fortinet FortiSwitch datasheets linked in each row. FortiSwitch rows are partly verified because Fortinet lists routing and MACsec features per family, not per model, and FortiSwitches are managed from a FortiGate (FortiLink) rather than stacked. The Verified column says how much of a row was confirmed, and a dash means the datasheet doesn't state that value. Juniper EX4300 is no longer published, so its rows are unverified. Aruba has no CX 6001, 6002 or 6003; the CX 6000 family is the 6000, 6100, 6200, 6300 and 6400 series, all listed here. Access points were checked on 14 Nov 2026 against the Cisco, HPE Aruba, HPE Mist (Juniper) and Fortinet AP datasheets.</p>
@@ -217,6 +225,11 @@ window.dash = (function () {
       <span class="sf-tab-mark sf-mark-green" aria-hidden="true"></span>
       <span class="sf-tab-label">AP comparison</span>
       <b class="sf-tab-badge" data-draw="navapcmp">—</b>
+    </button>
+    <button type="button" class="sf-tab" data-target="wlc">
+      <span class="sf-tab-mark sf-mark-blue" aria-hidden="true"></span>
+      <span class="sf-tab-label">Controllers</span>
+      <b class="sf-tab-badge" data-draw="navwlc">—</b>
     </button>
     <div class="sf-export" id="sf-export" hidden>
       <span class="sf-side-title">Export</span>
@@ -601,6 +614,103 @@ window.dash = (function () {
       </div>
     </div>
   </section>
+
+  <section class="sf-card" id="wlc" aria-labelledby="wlc-h">
+    <div class="sf-bar">
+      <h2 id="wlc-h">Wireless controllers</h2>
+      <button type="button" class="sf-btn" id="w-reset">Reset controller filters</button>
+    </div>
+    <p class="sf-muted"><b data-draw="wlccount">—</b> of <b data-draw="wlctotal" data-source="total_wlc">—</b> controllers match: on-premises appliances, virtual and embedded controllers, and cloud management services. Juniper has no on-premises controller; its APs are managed from the Mist cloud, with optional Mist Edge appliances on site. Every FortiGate firewall includes the Fortinet wireless controller.</p>
+    <div class="sf-filters" id="wlc-filters">
+      <div class="sf-field sf-wide">
+        <span class="sf-legend">Vendor</span>
+        <div class="sf-checks">
+          <label><input type="checkbox" class="wlc-vendor" id="w-v-cisco" value="Cisco" checked> Cisco</label>
+          <label><input type="checkbox" class="wlc-vendor" id="w-v-aruba" value="HPE Aruba" checked> HPE Aruba</label>
+          <label><input type="checkbox" class="wlc-vendor" id="w-v-juniper" value="Juniper" checked> Juniper Mist</label>
+          <label><input type="checkbox" class="wlc-vendor" id="w-v-fortinet" value="Fortinet" checked> Fortinet</label>
+        </div>
+      </div>
+      <div class="sf-field">
+        <label for="w-q">Search model or family</label>
+        <input type="search" id="w-q" placeholder="e.g. 9800, 9240, Mist Edge">
+      </div>
+      <div class="sf-field">
+        <label for="w-dep">Deployment</label>
+        <select class="dash-select" id="w-dep">
+          <option value="">Any</option>
+          <option value="On-premises">On-premises</option>
+          <option value="Cloud">Cloud</option>
+        </select>
+      </div>
+      <div class="sf-field">
+        <label for="w-form">Type</label>
+        <select class="dash-select" id="w-form">
+          <option value="">Any</option>
+          <option value="Appliance">Hardware appliance</option>
+          <option value="Virtual">Virtual machine</option>
+          <option value="Embedded">Embedded in AP</option>
+          <option value="Cloud service">Cloud service</option>
+        </select>
+      </div>
+      <div class="sf-field">
+        <label for="w-aps">Access points supported</label>
+        <select class="dash-select" id="w-aps">
+          <option value="">Any</option>
+          <option value="100">100 or more</option>
+          <option value="500">500 or more</option>
+          <option value="2000">2,000 or more</option>
+          <option value="5000">5,000 or more</option>
+        </select>
+      </div>
+      <div class="sf-field">
+        <label for="w-tp">Throughput</label>
+        <select class="dash-select" id="w-tp">
+          <option value="">Any</option>
+          <option value="5">5 Gbps or more</option>
+          <option value="20">20 Gbps or more</option>
+          <option value="40">40 Gbps or more</option>
+          <option value="80">80 Gbps or more</option>
+        </select>
+      </div>
+      <div class="sf-field sf-wide">
+        <span class="sf-legend">Must have</span>
+        <div class="sf-checks">
+          <label><input type="checkbox" class="wlc-feat" id="w-psu" value="psu"> Redundant power supply</label>
+          <label><input type="checkbox" class="wlc-feat" id="w-ver" value="ver"> Fully verified rows only</label>
+        </div>
+      </div>
+    </div>
+    <div class="sf-chips" data-draw="wlcvendorsum" aria-label="Controller matches by vendor"></div>
+    <p class="sf-muted">Click a column heading to sort. Capacity for licensed or tiered models is shown as the datasheet states it.</p>
+    <div class="sf-scroll">
+      <table class="sf-table" id="wlc-table" data-source="wlc" data-row-key="model">
+        <thead>
+          <tr>
+            <th scope="col" class="wl-sort sf-sort" tabindex="0" data-k="model" data-field="model">Model</th>
+            <th scope="col" class="wl-sort sf-sort" tabindex="0" data-k="vendor" data-field="vendor">Vendor</th>
+            <th scope="col" class="wl-sort sf-sort" tabindex="0" data-k="deployment" data-field="deployment">Deployment</th>
+            <th scope="col" data-field="form">Type</th>
+            <th scope="col" data-field="size">Size / platform</th>
+            <th scope="col" class="wl-sort sf-sort n" tabindex="0" data-k="max_aps" aria-sort="descending">Max APs</th>
+            <th scope="col" class="wl-sort sf-sort n" tabindex="0" data-k="max_clients" data-field="max_clients">Max clients</th>
+            <th scope="col" class="wl-sort sf-sort" tabindex="0" data-k="throughput_gbps">Throughput</th>
+            <th scope="col" data-field="ports">Network ports</th>
+            <th scope="col" data-field="ha">High availability</th>
+            <th scope="col" data-field="psu_redundant">Redundant PSU</th>
+            <th scope="col" class="wl-sort sf-sort" tabindex="0" data-k="verified" data-field="verified">Verified</th>
+            <th scope="col">Datasheet</th>
+          </tr>
+        </thead>
+        <tbody data-draw="wlcresults"></tbody>
+      </table>
+    </div>
+    <p class="sf-muted" id="wlc-no-match" hidden>No controller meets every requirement. Loosen one of the filters above.</p>
+    <details class="sf-notes-box">
+      <summary>Notes for each controller</summary>
+      <dl class="sf-notes-list" data-draw="wlcnotes"></dl>
+    </details>
+  </section>
   </div>
   </div>
 </div>
@@ -699,14 +809,14 @@ window.sfRedraw = function () { ['results', 'count', 'vendorsum', 'navcount'].fo
     return se.scrollTop > 0 && se.scrollHeight - (se.scrollTop + window.innerHeight) < 8;
   };
   /* The section in view is the last one whose top has passed 30% of the window height. */
-  const ids = ['requirements', 'compare', 'aps', 'apcompare'];
+  const ids = ['requirements', 'compare', 'aps', 'apcompare', 'wlc'];
   let ticking = false;
   const update = () => {
     ticking = false;
     let best = ids[0];
     const line = window.innerHeight * 0.3;
     ids.forEach((id) => { const el = document.getElementById(id); if (el && el.getBoundingClientRect().top <= line) best = id; });
-    if (atBottom()) best = 'apcompare';
+    if (atBottom()) best = 'wlc';
     setActive(best);
   };
   window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
@@ -1146,6 +1256,12 @@ window.apRedraw = function () { ['apresults', 'apcount', 'apvendorsum', 'navap']
     ['max_power_w', 'Max power (W)'], ['ble', 'BLE/IoT'], ['usb', 'USB'], ['ip_rating', 'IP rating'], ['management', 'Management'],
     ['verified', 'Verified'], ['notes', 'Notes'], ['datasheet', 'Datasheet']];
   const AP_PDF = ['model', 'vendor', 'wifi', 'environment', 'max_rate_gbps', 'uplinks', 'poe', 'max_power_w', 'verified'];
+  const WL = [['model', 'Model'], ['vendor', 'Vendor'], ['family', 'Family'], ['deployment', 'Deployment'], ['form', 'Type'], ['size', 'Size / platform'],
+    ['max_aps', 'Max APs (number)'], ['max_aps_text', 'Max APs (as stated)'], ['max_clients', 'Max clients'], ['throughput_gbps', 'Throughput (Gbps)'],
+    ['throughput_text', 'Throughput (as stated)'], ['ports', 'Network ports'], ['ha', 'High availability'], ['psu_redundant', 'Redundant PSU'],
+    ['verified', 'Verified'], ['notes', 'Notes'], ['datasheet', 'Datasheet']];
+  const wlAps = (r) => (r.max_aps_text ? r.max_aps_text : (r.max_aps == null ? '-' : String(r.max_aps)));
+  const wlTp = (r) => (r.throughput_text ? r.throughput_text : (r.throughput_gbps == null ? '-' : r.throughput_gbps + ' Gbps'));
   const label = (defs, k) => (defs.find((d) => d[0] === k) || [k, k])[1];
   const cell = (v) => (v == null ? '' : v);
   const txt = (v) => (v == null || v === '' ? '-' : String(v));
@@ -1155,13 +1271,15 @@ window.apRedraw = function () { ['apresults', 'apcount', 'apvendorsum', 'navap']
     const apRows = ap.status === 'ok' ? window.sfSortRows(window.apFilter(ap.data), window.apState.sort) : [];
     const swCmp = sw.status === 'ok' ? window.sfState.sel.map((m) => sw.data.find((r) => r.model === m)).filter(Boolean) : [];
     const apCmp = ap.status === 'ok' ? window.apState.sel.map((m) => ap.data.find((r) => r.model === m)).filter(Boolean) : [];
-    return { swRows, apRows, swCmp, apCmp };
+    const wl = dash.data('wlc');
+    const wlRows = wl.status === 'ok' && window.wlcFilter ? window.sfSortRows(window.wlcFilter(wl.data), window.wlcState.sort) : [];
+    return { swRows, apRows, swCmp, apCmp, wlRows };
   };
   const stamp = () => new Date().toISOString().slice(0, 10);
 
   async function toXlsx() {
     await load('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
-    const { swRows, apRows, swCmp, apCmp } = data();
+    const { swRows, apRows, swCmp, apCmp, wlRows } = data();
     const wb = XLSX.utils.book_new();
     const table = (defs, rows) => [defs.map((d) => d[1])].concat(rows.map((r) => defs.map((d) => cell(r[d[0]]))));
     const cmp = (defs, picked) => [['Spec'].concat(picked.map((r) => r.model))].concat(defs.slice(1).map((d) => [d[1]].concat(picked.map((r) => cell(r[d[0]])))));
@@ -1170,7 +1288,8 @@ window.apRedraw = function () { ['apresults', 'apcount', 'apvendorsum', 'navap']
     if (swCmp.length) add('Switch comparison', cmp(SW, swCmp), [22].concat(swCmp.map(() => 34)));
     add('Access points', table(AP, apRows), AP.map((d) => (d[0] === 'notes' ? 60 : d[0] === 'datasheet' ? 50 : d[0] === 'radios' ? 40 : Math.max(10, d[1].length + 2))));
     if (apCmp.length) add('AP comparison', cmp(AP, apCmp), [22].concat(apCmp.map(() => 34)));
-    add('About', [['Enterprise Campus Wired and Wireless Spec Finder'], ['Exported', new Date().toLocaleString()], ['Switches exported', swRows.length], ['Access points exported', apRows.length],
+    add('Wireless controllers', table(WL, wlRows), WL.map((d) => (d[0] === 'notes' ? 60 : d[0] === 'datasheet' ? 50 : Math.max(12, d[1].length + 2))));
+    add('About', [['Enterprise Campus Wired and Wireless Spec Finder'], ['Exported', new Date().toLocaleString()], ['Switches exported', swRows.length], ['Access points exported', apRows.length], ['Wireless controllers exported', wlRows.length],
       ['Note', 'Rows reflect the filters and sort order on the page. Confirm figures on the linked vendor datasheet before quoting.'],
       ['Source', 'https://mrevelino.github.io/wired-wireless-spec-finder/']], [24, 90]);
     XLSX.writeFile(wb, 'wired-wireless-spec-finder-' + stamp() + '.xlsx');
@@ -1179,7 +1298,7 @@ window.apRedraw = function () { ['apresults', 'apcount', 'apvendorsum', 'navap']
   async function toPdf() {
     await load('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
     await load('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js');
-    const { swRows, apRows, swCmp, apCmp } = data();
+    const { swRows, apRows, swCmp, apCmp, wlRows } = data();
     const doc = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
     const blue = [0, 80, 115], green = [1, 169, 130];
     let first = true;
@@ -1207,6 +1326,9 @@ window.apRedraw = function () { ['apresults', 'apcount', 'apvendorsum', 'navap']
       heading('Access point comparison', 'Selected access points side by side.');
       tbl(['Spec'].concat(apCmp.map((r) => r.model)), AP.slice(1).map((d) => [d[1]].concat(apCmp.map((r) => txt(r[d[0]])))), green, { columnStyles: { 0: { fontStyle: 'bold', cellWidth: 110 } } });
     }
+    heading('Wireless controllers (' + wlRows.length + ')', 'On-premises and cloud controllers matching the page filters.');
+    tbl(['Model', 'Vendor', 'Deployment', 'Type', 'Max APs', 'Max clients', 'Throughput', 'Network ports', 'Redundant PSU', 'Verified'],
+      wlRows.map((r) => [r.model, r.vendor, txt(r.deployment), txt(r.form), wlAps(r), txt(r.max_clients), wlTp(r), txt(r.ports), txt(r.psu_redundant), txt(r.verified)]), blue);
     const n = doc.getNumberOfPages();
     for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFontSize(8); doc.setTextColor(120); doc.text('Enterprise Campus Wired and Wireless Spec Finder - page ' + i + ' of ' + n, 36, doc.internal.pageSize.getHeight() - 18); }
     doc.save('wired-wireless-spec-finder-' + stamp() + '.pdf');
@@ -1227,7 +1349,159 @@ window.apRedraw = function () { ['apresults', 'apcount', 'apvendorsum', 'navap']
 })();
 </script>
 
-<p class="sf-foot">Data: switches <a href="data/switch_specs.json">JSON</a> / <a href="data/switch_specs.csv">CSV</a> · access points <a href="data/access_points.json">JSON</a> / <a href="data/access_points.csv">CSV</a> · Sources and method in the <a href="https://github.com/mrevelino/wired-wireless-spec-finder#readme">README</a>. Vendor and product names belong to their owners; always confirm figures on the linked datasheet.</p>
+<script>
+/* ---------- Wireless controllers ---------- */
+dash.calc('total_wlc', {
+  title: 'Wireless controllers listed',
+  description: 'Number of wireless controllers and cloud management services in the list.',
+  inputs: ['wlc'],
+  fn: (wlc) => wlc.length
+});
+
+window.wlcState = window.wlcState || { sort: { key: 'max_aps', dir: -1 } };
+
+window.wlcFilter = function (rows) {
+  const val = (id) => { const el = document.getElementById(id); return el ? el.value : ''; };
+  const num = (id) => { const v = val(id); return v === '' ? null : +v; };
+  const vendors = [...document.querySelectorAll('.wlc-vendor')].filter((c) => c.checked).map((c) => c.value);
+  const feats = [...document.querySelectorAll('.wlc-feat')].filter((c) => c.checked).map((c) => c.value);
+  const q = val('w-q').trim().toLowerCase();
+  const dep = val('w-dep'), form = val('w-form');
+  const aps = num('w-aps'), tp = num('w-tp');
+  return rows.filter((r) => {
+    if (!vendors.includes(r.vendor)) return false;
+    if (q && !(r.model + ' ' + r.family).toLowerCase().includes(q)) return false;
+    if (dep && r.deployment !== dep) return false;
+    if (form && !String(r.form || '').startsWith(form)) return false;
+    if (aps !== null && !(r.max_aps != null && +r.max_aps >= aps)) return false;
+    if (tp !== null && !(r.throughput_gbps != null && +r.throughput_gbps >= tp)) return false;
+    for (const f of feats) {
+      if (f === 'psu' && r.psu_redundant !== 'Yes') return false;
+      if (f === 'ver' && r.verified !== 'Verified') return false;
+    }
+    return true;
+  });
+};
+
+window.wlcRedraw = function () { ['wlcresults', 'wlccount', 'wlcvendorsum', 'navwlc', 'wlcnotes'].forEach((n) => dash.draw(n)); };
+
+(function () {
+  const redraw = () => window.wlcRedraw();
+  document.querySelectorAll('#wlc-filters input, #wlc-filters select').forEach((el) => {
+    el.addEventListener('input', redraw);
+    el.addEventListener('change', redraw);
+  });
+  const reset = document.getElementById('w-reset');
+  if (reset) reset.addEventListener('click', () => {
+    document.querySelectorAll('#wlc-filters select, #wlc-filters input[type=search]').forEach((el) => { el.value = ''; });
+    document.querySelectorAll('.wlc-vendor').forEach((c) => { c.checked = true; });
+    document.querySelectorAll('.wlc-feat').forEach((c) => { c.checked = false; });
+    redraw();
+  });
+  document.querySelectorAll('#wlc-table .wl-sort').forEach((th) => {
+    const go = () => {
+      const s = window.wlcState.sort, k = th.dataset.k;
+      s.dir = s.key === k ? -s.dir : (['model', 'vendor', 'deployment', 'verified'].includes(k) ? 1 : -1);
+      s.key = k;
+      document.querySelectorAll('#wlc-table .wl-sort').forEach((o) => o.removeAttribute('aria-sort'));
+      th.setAttribute('aria-sort', s.dir > 0 ? 'ascending' : 'descending');
+      dash.draw('wlcresults');
+    };
+    th.addEventListener('click', go);
+    th.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+  });
+})();
+
+(function () {
+  const fmt = d3.format(',');
+  const show = (v) => (v == null || v === '' ? '—' : (typeof v === 'number' ? fmt(v) : String(v)));
+  const vendorColor = { 'Cisco': 'var(--sf-cisco)', 'HPE Aruba': 'var(--sf-hpe)', 'Juniper': 'var(--sf-juniper)', 'Fortinet': 'var(--sf-fortinet)' };
+  const rowsNow = () => {
+    const d = dash.data('wlc');
+    return d.status === 'ok' ? window.sfSortRows(window.wlcFilter(d.data), window.wlcState.sort) : null;
+  };
+
+  dash.draw('wlctotal', (el) => {
+    const d = dash.data('total_wlc');
+    el.textContent = d.status === 'ok' && d.data != null ? fmt(d.data) : '—';
+  });
+  dash.draw('wlccount', (el) => { const r = rowsNow(); el.textContent = r ? fmt(r.length) : '—'; });
+  dash.draw('navwlc', (el) => { const r = rowsNow(); el.textContent = r ? fmt(r.length) : '—'; });
+
+  dash.draw('wlcvendorsum', (el) => {
+    el.replaceChildren();
+    const rows = rowsNow();
+    if (!rows) return;
+    ['Cisco', 'HPE Aruba', 'Juniper', 'Fortinet'].forEach((v) => {
+      const chip = document.createElement('span');
+      chip.className = 'sf-chip';
+      const dot = document.createElement('span');
+      dot.className = 'sf-vtag';
+      dot.style.background = vendorColor[v];
+      const name = document.createElement('span');
+      name.textContent = v;
+      const n = document.createElement('b');
+      n.textContent = fmt(rows.filter((r) => r.vendor === v).length);
+      chip.append(dot, name, n);
+      el.append(chip);
+    });
+  });
+
+  dash.draw('wlcresults', (tbody) => {
+    tbody.replaceChildren();
+    const rows = rowsNow();
+    const none = document.getElementById('wlc-no-match');
+    if (!rows) { if (none) none.hidden = true; return; }
+    if (none) none.hidden = rows.length > 0;
+    rows.forEach((r) => {
+      const tr = document.createElement('tr');
+      tr.dataset.key = encodeURIComponent(r.model);
+      const cell = (text, cls) => { const td = document.createElement('td'); if (cls) td.className = cls; td.textContent = text; tr.append(td); return td; };
+      const tdm = document.createElement('td');
+      const b = document.createElement('b'); b.textContent = r.model; tdm.append(b); tr.append(tdm);
+      const tdv = document.createElement('td');
+      const dot = document.createElement('span'); dot.className = 'sf-vtag'; dot.style.background = vendorColor[r.vendor];
+      tdv.append(dot, document.createTextNode(r.vendor)); tr.append(tdv);
+      cell(show(r.deployment));
+      cell(show(r.form), 'sf-wrap');
+      cell(show(r.size), 'sf-wrap');
+      cell(r.max_aps_text ? r.max_aps_text : show(r.max_aps), 'n sf-wrap');
+      cell(show(r.max_clients), 'n');
+      cell(r.throughput_text ? r.throughput_text : (r.throughput_gbps != null ? fmt(r.throughput_gbps) + ' Gbps' : '—'), 'sf-wrap');
+      cell(show(r.ports), 'sf-wrap');
+      cell(show(r.ha), 'sf-wrap');
+      cell(show(r.psu_redundant));
+      const tdver = document.createElement('td');
+      const sp = document.createElement('span');
+      sp.className = 'sf-ver ' + (r.verified === 'Verified' ? 'sf-ver-ok' : r.verified === 'Partly verified' ? 'sf-ver-part' : 'sf-ver-no');
+      sp.textContent = show(r.verified);
+      tdver.append(sp); tr.append(tdver);
+      const tdl = document.createElement('td');
+      if (typeof r.datasheet === 'string' && r.datasheet.startsWith('https://')) {
+        const a = document.createElement('a');
+        a.href = r.datasheet; a.target = '_blank'; a.rel = 'noopener noreferrer';
+        a.textContent = 'Open';
+        tdl.append(a);
+      } else tdl.textContent = '—';
+      tr.append(tdl);
+      tbody.append(tr);
+    });
+  });
+
+  dash.draw('wlcnotes', (dl) => {
+    dl.replaceChildren();
+    const rows = rowsNow();
+    if (!rows) return;
+    rows.forEach((r) => {
+      const dt = document.createElement('dt'); dt.textContent = r.model;
+      const dd = document.createElement('dd'); dd.textContent = show(r.notes);
+      dl.append(dt, dd);
+    });
+  });
+})();
+</script>
+
+<p class="sf-foot">Data: switches <a href="data/switch_specs.json">JSON</a> / <a href="data/switch_specs.csv">CSV</a> · access points <a href="data/access_points.json">JSON</a> / <a href="data/access_points.csv">CSV</a> · wireless controllers <a href="data/wireless_controllers.json">JSON</a> / <a href="data/wireless_controllers.csv">CSV</a> · Sources and method in the <a href="https://github.com/mrevelino/wired-wireless-spec-finder#readme">README</a>. Vendor and product names belong to their owners; always confirm figures on the linked datasheet.</p>
 <div class="sf-foot sf-visits">
   <img src="https://hits.sh/mrevelino.github.io/wired-wireless-spec-finder.svg?view=today-total&amp;label=Page%20views&amp;color=049fd9&amp;labelColor=0d274d" alt="Page views today and in total" height="20">
   <span>Page views today / all time. Every page load counts, including repeat visits; counted by <a href="https://hits.sh/" rel="noopener">hits.sh</a>.</span>
@@ -1243,6 +1517,10 @@ fetch('data/access_points.json')
   .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
   .then((j) => dash._set('aps', { status: 'ok', data: j.rows }))
   .catch(() => { dash._set('aps', { status: 'error', data: [] }); const e = document.getElementById('load-error'); if (e) e.hidden = false; });
+fetch('data/wireless_controllers.json')
+  .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then((j) => dash._set('wlc', { status: 'ok', data: j.rows }))
+  .catch(() => { dash._set('wlc', { status: 'error', data: [] }); const e = document.getElementById('load-error'); if (e) e.hidden = false; });
 </script>
 </body>
 </html>
