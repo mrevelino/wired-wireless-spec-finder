@@ -1682,6 +1682,7 @@ dash.calc('total_rtr', {
 });
 
 window.rtrState = window.rtrState || { sort: { key: 'throughput_gbps', dir: -1 }, sel: [] };
+if (!Array.isArray(window.rtrState.sel)) window.rtrState.sel = [];
 
 window.rtrFilter = function (rows) {
   const val = (id) => { const el = document.getElementById(id); return el ? el.value : ''; };
