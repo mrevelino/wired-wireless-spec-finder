@@ -21,6 +21,12 @@ and wireless controllers, on-premises and cloud:
 - **Juniper (HPE Mist)** Mist cloud (Juniper has no on-premises controller)
 - **Fortinet** FortiGate wireless controller by series (30/40 up to 4000), FortiGate-VM, FortiManagement Cloud
 
+and current enterprise routers (Fortinet not included; end-of-life models left out):
+
+- **Cisco** 8100, 8200, 8300, 8400 and 8500 Series Secure Routers, ISR 1000 (C1121 family), Catalyst 8000V
+- **HPE Aruba Networking** EdgeConnect SD-WAN gateways (EC-10104, EC-XS, EC-10106, EC-10108, EC-M-H, EC-L-H, EC-XL-H, EC-10150)
+- **Juniper (HPE Networking)** Session Smart Routers SSR120 / SSR130 / SSR1200 / SSR1300 / SSR1400 / SSR1500, MX301, MX304
+
 **Live page:** https://mrevelino.github.io/wired-wireless-spec-finder/
 
 ![Page views today / all time](https://hits.sh/mrevelino.github.io/wired-wireless-spec-finder.svg?view=today-total&label=Page%20views&color=049fd9&labelColor=0d274d)
@@ -36,6 +42,7 @@ The page-view badge (also at the foot of the live page) comes from [hits.sh](htt
 - Show only rows fully verified against the vendor datasheet.
 - **Access points:** filter by vendor, Wi-Fi generation, indoor / wall plate / outdoor, data rate, uplink speed, 4x4 radios, 6 GHz, dual uplinks, full function on 802.3at PoE, BLE/IoT and USB; sort and compare up to four.
 - **Wireless controllers:** filter by vendor, on-premises or cloud, appliance / virtual / embedded / cloud service, number of APs, throughput and redundant power.
+- **Routers:** filter by vendor, site size or role (small branch to WAN aggregation), form factor, headline throughput, fastest port, cellular option and redundant power.
 - **Export:** download everything that matches your filters, plus your comparisons, as an Excel workbook (one sheet per table) or a PDF report. Use the Export buttons in the side panel.
 
 ## Data
@@ -51,6 +58,9 @@ The page-view badge (also at the foot of the live page) comes from [hits.sh](htt
 | [`data/wireless_controllers.json`](data/wireless_controllers.json) | 28 wireless controllers and cloud services (`rows`) |
 | [`data/wireless_controllers.csv`](data/wireless_controllers.csv) | The same controller rows as CSV |
 | [`scripts/make_wlc.py`](scripts/make_wlc.py) | Generates the controller JSON: `python scripts/make_wlc.py data/wireless_controllers.json` |
+| [`data/routers.json`](data/routers.json) | 40 current enterprise routers (`rows`) |
+| [`data/routers.csv`](data/routers.csv) | The same router rows as CSV |
+| [`scripts/make_routers.py`](scripts/make_routers.py) | Generates the router JSON: `python scripts/make_routers.py data/routers.json` |
 
 Key columns: `ports`, `port_speed`, `port_max_gbps`, `uplinks`, `uplink_max_gbps`, `poe`, `poe_w_port`, `poe_budget_w`, `switching_gbps`, `fwd_mpps`, `dram_gb`, `flash_gb`, `mac`, `ipv4_routes`, `stacking`, `stack_max`, the feature flags (`ospf`, `bgp`, `evpn_vxlan`, `macsec`, `mpls`, `redundant_psu`), plus `verified`, `notes` and `datasheet`. An empty value means the datasheet does not state it.
 
@@ -66,6 +76,10 @@ Checked on 13 November 2026 against:
 Access points were checked on 14 November 2026 against the Cisco access point datasheets on cisco.com, the HPE Aruba Networking and HPE Mist (Juniper) AP datasheets on hpe.com, and the [FortiAP series datasheet](https://www.fortinet.com/content/dam/fortinet/assets/data-sheets/pdf/fortiap-series.pdf). 42 of 43 AP rows are verified; the Juniper AP45's uplink speed could not be read from its datasheet. Max power is blank where the datasheet gives no figure.
 
 Wireless controllers were checked on 15 November 2026 against the Cisco controller datasheets on cisco.com, the HPE Aruba Networking 9200 and 9100 gateway QuickSpecs and Fortinet's [Wireless Product Matrix](https://www.fortinet.com/content/dam/fortinet/assets/data-sheets/Fortinet_Wireless_Product_Matrix.pdf) (November 2026). Cloud services (Meraki, Central, Mist, FortiManagement Cloud) publish no capacity figures, so those rows are partly verified. FortiGate capacity is given per series.
+
+Routers were checked on 15 November 2026 against the Cisco 8000 Series Secure Router, ISR 1000 and Catalyst 8000V datasheets on cisco.com, the HPE Aruba Networking [EdgeConnect SD-WAN QuickSpecs](https://www.hpe.com/us/en/collaterals/collateral.a50004289enw.html), and the HPE-hosted Juniper [SSR100](https://www.hpe.com/psnow/doc/a00150824enw), [SSR1000](https://www.hpe.com/psnow/doc/a00150832enw), [MX301](https://www.hpe.com/psnow/doc/a00155177enw) and [MX304](https://www.hpe.com/psnow/doc/a00150831enw) datasheets. Throughput is shown as each vendor states it: Cisco quotes forwarding / IPsec / SD-WAN at 512-byte packets, Juniper SSR quotes unencrypted / encrypted / encrypted+HMAC at IMIX, and EdgeConnect quotes typical WAN bandwidth, so the numbers are not directly comparable across vendors.
+
+Routers left out as end of life: Cisco Catalyst 8200 / 8300 / 8500 Edge (end of sale 2027, replaced by the 8000 Series Secure Routers), Cisco ISR 1100 / 1101 / 1109 / 1111 (end of sale 28 Jul 2026) and ISR 1112-1161 (end of sale 31 Jan 2027), Juniper MX204 (last order 15 Jun 2027) and HPE Aruba EdgeConnect EC-S-P (end of sale 31 Dec 2024).
 
 Each switch row's `verified` field says how much was confirmed:
 
