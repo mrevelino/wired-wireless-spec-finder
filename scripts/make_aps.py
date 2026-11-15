@@ -180,6 +180,10 @@ add(dict(f, wifi="Wi-Fi 6E", bands="2.4 / 5 / 6 GHz", has_6ghz="Yes", environmen
     uplinks="1x 2.5G + 1x 1G", uplink_ports=2, uplink_max_gbps=2.5, poe="802.3at or passive PoE (included)", full_on_at="Yes",
     max_power_w=28, usb="No", ip_rating="IP67", notes="574 + 1,201 + 2,401 Mbps. 6 GHz subject to regional approval.")
 
+# ---------------- End of life: removed (checked 15 Nov 2026) ----------------
+EOL_REMOVED = {'AP43': 'Juniper TSB109591: AP43 last order 31 Dec 2026'}
+rows = [r for r in rows if r['model'] not in EOL_REMOVED]
+
 cols = ["vendor","family","model","wifi","environment","bands","has_6ghz","radios","max_ss","max_rate_gbps","uplinks","uplink_ports",
         "uplink_max_gbps","poe","full_on_at","max_power_w","ble","usb","ip_rating","management","verified","notes","datasheet"]
 out = []

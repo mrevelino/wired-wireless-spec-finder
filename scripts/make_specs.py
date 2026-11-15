@@ -334,6 +334,27 @@ add(fsr, model="FSR-424F-POE", ports=24, port_speed="12x 1/2.5G RJ45 + 12x 1/2.5
     poe="PoE+ (12 ports 4-pair 60 W)", poe_w_port=60, poe_budget_w=421, switching_gbps=360, fwd_mpps=536.0, mac=32000, ipv4_routes=16000, flash_gb=0.25,
     notes="Fanless, -40 to 70 °C, redundant DC input terminals. Hardware routing: 16,000 IPv4 routes. Routing protocols (OSPF, BGP, IS-IS) listed for the family. MACsec not listed. Managed from a FortiGate via FortiLink.")
 
+# ---------------- End of life: removed (checked 15 Nov 2026) ----------------
+EOL_REMOVED = {'C9404R + Sup-1XL': 'Cisco EOL15392: C9400-SUP-1XL end of sale 30 Apr 2025',
+    'C9407R + Sup-1XL': 'Cisco EOL15392: C9400-SUP-1XL end of sale 30 Apr 2025',
+    'C9410R + Sup-1XL': 'Cisco EOL15392: C9400-SUP-1XL end of sale 30 Apr 2025',
+    'EX2300-24T': 'Juniper TSB107683: EX2300 last order 30 Sep 2026',
+    'EX2300-24P': 'Juniper TSB107683: EX2300 last order 30 Sep 2026',
+    'EX2300-48P': 'Juniper TSB107683: EX2300 last order 30 Sep 2026',
+    'EX2300-48MP': 'Juniper TSB107683: EX2300 last order 30 Sep 2026',
+    'EX2300-C-12P': 'Juniper TSB107683: EX2300 last order 30 Sep 2026',
+    'EX3400-24P': 'Juniper TSB111598: EX3400 EOL announced 30 Oct 2026, last order 30 Apr 2027',
+    'EX3400-48T': 'Juniper TSB111598: EX3400 EOL announced 30 Oct 2026, last order 30 Apr 2027',
+    'EX3400-48P': 'Juniper TSB111598: EX3400 EOL announced 30 Oct 2026, last order 30 Apr 2027',
+    'EX4300-48P': 'Juniper EOL: EX4300-48P last order 31 Mar 2024',
+    'EX9204 chassis': 'Juniper EOL: EX9200 base-system bundles last order 2019-2022',
+    'EX9208 chassis': 'Juniper EOL: EX9200 base-system bundles last order 2019-2022',
+    'EX9214 chassis': 'Juniper EOL: EX9200 base-system bundles last order 2019-2022',
+    '6200F 24G Class4 PoE 4SFP+ 370W (JL725A)': 'HPE warranty quick reference: JL725A end of sale 30 Jun 2025',
+    '6200F 48G 4SFP+ (JL726A)': 'HPE warranty quick reference: JL726A EOS planning (6200F A models end of sale 30 Jun 2025)',
+    '6200F 48G Class4 PoE 4SFP+ 740W (JL728A)': 'HPE warranty quick reference: JL728A EOS planning (6200F A models end of sale 30 Jun 2025)'}
+rows = [r for r in rows if r['model'] not in EOL_REMOVED]
+
 cols = ["vendor","series","model","os","form","ports","port_speed","port_max_gbps","uplinks","uplink_max_gbps",
         "poe","poe_w_port","poe_budget_w","switching_gbps","fwd_mpps","dram_gb","flash_gb","mac","ipv4_routes",
         "stacking","stack_max","ospf","bgp","evpn_vxlan","macsec","mpls","redundant_psu","verified","notes","datasheet"]

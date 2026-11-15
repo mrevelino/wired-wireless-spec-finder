@@ -2,23 +2,23 @@
 
 Search and compare campus/data-center Ethernet switches by requirement:
 
-- **Cisco Catalyst** 9200 / 9200L / 9200CX, 9300 / 9300L / 9300X, 9400, 9500 / 9500X
-- **HPE Aruba Networking CX** 6000, 6100, 6200F / 6200M, 6300M / 6300F, 6400
-- **Juniper (HPE Networking) EX** 2300 / 2300-C, 3400, 4100 / 4100-F, 4300, 4400, 4650, 9200
+- **Cisco Catalyst** 9200 / 9200L / 9200CX, 9300 / 9300L / 9300X, 9400 (Supervisor-2), 9500 / 9500X
+- **HPE Aruba Networking CX** 6000, 6100, 6200M, 6300M / 6300F, 6400
+- **Juniper (HPE Networking) EX** 4100 / 4100-F, 4300 (48MP), 4400, 4650
 - **Fortinet FortiSwitch** Secure Access (100F, 100G, 200), Secure Campus (300, 400, 600, T1024) and Rugged (FSR-108F, 112F-POE, 216F-POE, 424F-POE)
 
 and wireless access points:
 
 - **Cisco** Wireless 9172 / 9176 / 9178 (Wi-Fi 7), Catalyst 9162 / 9164 / 9166 / 9163E (Wi-Fi 6E), Catalyst 9124AX (outdoor Wi-Fi 6)
 - **HPE Aruba Networking** 720 / 730 / 740 / 750 (Wi-Fi 7), 610 / 630 / 650 / 670 (Wi-Fi 6E), 500 / 510 / 530 / 550 / 570 (Wi-Fi 6)
-- **Juniper (HPE Mist)** AP17 / AP27 / AP36 / AP47 / AP66 (Wi-Fi 7), AP24 / AP45 / AP64 (Wi-Fi 6E), AP32 / AP33 / AP43 (Wi-Fi 6)
+- **Juniper (HPE Mist)** AP17 / AP27 / AP36 / AP47 / AP66 (Wi-Fi 7), AP24 / AP45 / AP64 (Wi-Fi 6E), AP32 / AP33 (Wi-Fi 6)
 - **Fortinet FortiAP** 221K / 231K / 241K / 23JK / 244K / 222KL / 441K (Wi-Fi 7), 234G / 432G (outdoor Wi-Fi 6E)
 
 and wireless controllers, on-premises and cloud:
 
-- **Cisco** Wireless CW9800H1 / H2 / M / L, Catalyst 9800-80 / 40 / L, 9800-CL (private and public cloud), Embedded Wireless Controller on APs, Meraki cloud
+- **Cisco** Wireless CW9800H1 / H2 / M / L, Catalyst 9800-L, 9800-CL (private and public cloud), Embedded Wireless Controller on APs, Meraki cloud
 - **HPE Aruba Networking** 9240 Campus Gateway (base, Silver, Gold), 9106 / 9114 Hybrid Gateways, HPE Aruba Networking Central (cloud)
-- **Juniper (HPE Mist)** Mist cloud, plus Mist Edge ME-X1 / X5 / X10 on-site appliances (Juniper has no on-premises controller)
+- **Juniper (HPE Mist)** Mist cloud (Juniper has no on-premises controller)
 - **Fortinet** FortiGate wireless controller by series (30/40 up to 4000), FortiGate-VM, FortiManagement Cloud
 
 **Live page:** https://mrevelino.github.io/wired-wireless-spec-finder/
@@ -42,13 +42,13 @@ The page-view badge (also at the foot of the live page) comes from [hits.sh](htt
 
 | File | Contents |
 |---|---|
-| [`data/switch_specs.json`](data/switch_specs.json) | 103 models, one object per model (`rows`) |
+| [`data/switch_specs.json`](data/switch_specs.json) | 85 switches, one object per model (`rows`) |
 | [`data/switch_specs.csv`](data/switch_specs.csv) | The same rows as CSV |
 | [`scripts/make_specs.py`](scripts/make_specs.py) | The script that generates the JSON: `python scripts/make_specs.py data/switch_specs.json` |
-| [`data/access_points.json`](data/access_points.json) | 44 access points (`rows`) |
+| [`data/access_points.json`](data/access_points.json) | 43 access points (`rows`) |
 | [`data/access_points.csv`](data/access_points.csv) | The same AP rows as CSV |
 | [`scripts/make_aps.py`](scripts/make_aps.py) | Generates the AP JSON: `python scripts/make_aps.py data/access_points.json` |
-| [`data/wireless_controllers.json`](data/wireless_controllers.json) | 33 wireless controllers and cloud services (`rows`) |
+| [`data/wireless_controllers.json`](data/wireless_controllers.json) | 28 wireless controllers and cloud services (`rows`) |
 | [`data/wireless_controllers.csv`](data/wireless_controllers.csv) | The same controller rows as CSV |
 | [`scripts/make_wlc.py`](scripts/make_wlc.py) | Generates the controller JSON: `python scripts/make_wlc.py data/wireless_controllers.json` |
 
@@ -60,24 +60,31 @@ Checked on 13 November 2026 against:
 
 - Cisco Catalyst [9200](https://www.cisco.com/c/en/us/products/collateral/switches/catalyst-9200-series-switches/nb-06-cat9200-ser-data-sheet-cte-en.html), [9300](https://www.cisco.com/c/en/us/products/collateral/switches/catalyst-9300-series-switches/nb-06-cat9300-ser-data-sheet-cte-en.html), [9400](https://www.cisco.com/c/en/us/products/collateral/switches/catalyst-9400-series-switches/nb-06-cat9400-ser-data-sheet-cte-en.html) and [9500](https://www.cisco.com/c/en/us/products/collateral/switches/catalyst-9500-series-switches/nb-06-cat9500-ser-data-sheet-cte-en.html) datasheets
 - HPE Aruba Networking QuickSpecs: [CX 6000](https://www.hpe.com/us/en/collaterals/collateral.a50002592enw.html), [CX 6100](https://www.hpe.com/us/en/collaterals/collateral.a00021859enw.html), [CX 6200](https://www.hpe.com/us/en/collaterals/collateral.a00059762enw.html), [CX 6300](https://www.hpe.com/us/en/collaterals/collateral.a00073540enw.html), [CX 6400](https://www.hpe.com/us/en/collaterals/collateral.a00073541enw.html)
-- HPE-hosted Juniper datasheets: [EX2300](https://www.hpe.com/psnow/doc/a00151236enw), [EX2300-C](https://www.hpe.com/psnow/doc/a50014094enw), [EX3400](https://www.hpe.com/psnow/doc/a50014095enw), [EX4100](https://www.hpe.com/psnow/doc/a00150781enw), [EX4100-F](https://www.hpe.com/psnow/doc/a00150847enw), [EX4400](https://www.hpe.com/psnow/doc/a00150783enw), [EX4650](https://www.hpe.com/psnow/doc/a00150780enw), [EX9200](https://www.hpe.com/psnow/doc/a00150784enw)
+- HPE-hosted Juniper datasheets: [EX4100](https://www.hpe.com/psnow/doc/a00150781enw), [EX4100-F](https://www.hpe.com/psnow/doc/a00150847enw), [EX4400](https://www.hpe.com/psnow/doc/a00150783enw), [EX4650](https://www.hpe.com/psnow/doc/a00150780enw)
 - Fortinet FortiSwitch datasheets: [Secure Access](https://www.fortinet.com/content/dam/fortinet/assets/data-sheets/pdf/fortiswitch-secure-access-series.pdf), [Secure Campus](https://www.fortinet.com/content/dam/fortinet/assets/data-sheets/pdf/fortiswitch-campus-series.pdf), [Rugged](https://www.fortinet.com/content/dam/fortinet/assets/data-sheets/FortiSwitchRugged.pdf)
 
-Access points were checked on 14 November 2026 against the Cisco access point datasheets on cisco.com, the HPE Aruba Networking and HPE Mist (Juniper) AP datasheets on hpe.com, and the [FortiAP series datasheet](https://www.fortinet.com/content/dam/fortinet/assets/data-sheets/pdf/fortiap-series.pdf). 43 of 44 AP rows are verified; the Juniper AP45's uplink speed could not be read from its datasheet. Max power is blank where the datasheet gives no figure.
+Access points were checked on 14 November 2026 against the Cisco access point datasheets on cisco.com, the HPE Aruba Networking and HPE Mist (Juniper) AP datasheets on hpe.com, and the [FortiAP series datasheet](https://www.fortinet.com/content/dam/fortinet/assets/data-sheets/pdf/fortiap-series.pdf). 42 of 43 AP rows are verified; the Juniper AP45's uplink speed could not be read from its datasheet. Max power is blank where the datasheet gives no figure.
 
-Wireless controllers were checked on 15 November 2026 against the Cisco controller datasheets on cisco.com, the HPE Aruba Networking 9200 and 9100 gateway QuickSpecs, HPE's Mist Edge ME-X1 documentation and Fortinet's [Wireless Product Matrix](https://www.fortinet.com/content/dam/fortinet/assets/data-sheets/Fortinet_Wireless_Product_Matrix.pdf) (November 2026). Cloud services (Meraki, Central, Mist, FortiManagement Cloud) publish no capacity figures, so those rows are partly verified. Mist Edge ME-X5 and ME-X10 are not verified: their hardware pages are no longer online and other sources disagree. FortiGate capacity is given per series.
+Wireless controllers were checked on 15 November 2026 against the Cisco controller datasheets on cisco.com, the HPE Aruba Networking 9200 and 9100 gateway QuickSpecs and Fortinet's [Wireless Product Matrix](https://www.fortinet.com/content/dam/fortinet/assets/data-sheets/Fortinet_Wireless_Product_Matrix.pdf) (November 2026). Cloud services (Meraki, Central, Mist, FortiManagement Cloud) publish no capacity figures, so those rows are partly verified. FortiGate capacity is given per series.
 
 Each switch row's `verified` field says how much was confirmed:
 
-- **Verified (54 rows):** every figure matches the datasheet.
-- **Partly verified (47 rows):** Catalyst 9300 switching/forwarding figures and routing-feature flags could not be confirmed in the datasheet text; the Catalyst 9400 datasheet does not list supervisor DRAM, MAC or route scale. All 34 FortiSwitch rows: hardware figures match the datasheets, but Fortinet lists routing and MACsec support for each family rather than each model (it points to the FortiSwitch Feature Matrix).
-- **Not verified (2 rows):** Juniper EX4300 is no longer published by Juniper or HPE.
+- **Verified (40 rows):** every figure matches the datasheet.
+- **Partly verified (44 rows):** Catalyst 9300 switching/forwarding figures and routing-feature flags could not be confirmed in the datasheet text; the Catalyst 9400 datasheet does not list supervisor DRAM, MAC or route scale. All 34 FortiSwitch rows: hardware figures match the datasheets, but Fortinet lists routing and MACsec support for each family rather than each model (it points to the FortiSwitch Feature Matrix).
+- **Not verified (1 row):** Juniper EX4300-48MP; Juniper and HPE no longer publish an EX4300 datasheet.
+
+### End-of-life models removed (checked 15 November 2026)
+
+- **Cisco:** Catalyst 9800-80 and 9800-40 controllers (end of sale 31 Dec 2025, EOL15034); Catalyst 9400 Supervisor-1XL (end of sale 30 Apr 2025, EOL15392).
+- **Juniper:** EX2300 (last order 30 Sep 2026), EX3400 (EOL announced, last order 30 Apr 2027), EX4300-48P (last order 31 Mar 2024), EX9200 base systems (last order 2019-2022), AP43 (last order 31 Dec 2026), Mist Edge ME-X1 / ME-X5 / ME-X10 (2025). Source: Juniper End of Life pages.
+- **HPE Aruba:** CX 6200F JL725A / JL726A / JL728A (end of sale 30 Jun 2025 in HPE's warranty quick reference).
+- **Fortinet:** Fortinet's product life-cycle list requires a support login, so FortiSwitch and FortiAP end-of-life status was not checked; all listed models appear in Fortinet's current datasheets.
 
 ### Read with care
 
-- **PoE budget** is quoted differently by each vendor. Cisco 9300 figures are for one PSU with the largest PSU option; Cisco 9200, Juniper EX3400/EX4100/EX4400 and Aruba 6300M figures assume two PSUs. The `notes` field says which.
+- **PoE budget** is quoted differently by each vendor. Cisco 9300 figures are for one PSU with the largest PSU option; Cisco 9200, Juniper EX4100/EX4400 and Aruba 6300M figures assume two PSUs. The `notes` field says which.
 - **Switching capacity** uses each vendor's headline figure (Juniper's bidirectional figure is used), so small differences across vendors are not meaningful.
-- **Chassis rows** (Catalyst 9400, CX 6400, EX9200) show the chassis maximum with full line cards.
+- **Chassis rows** (Catalyst 9400, CX 6400) show the chassis maximum with full line cards.
 - Aruba has no CX 6001, 6002 or 6003 models; the CX 6000 family is the 6000, 6100, 6200, 6300 and 6400 series.
 - **FortiSwitches** are normally managed from a FortiGate over FortiLink (8 to 300 switches per FortiGate) instead of being stacked, so they have no stack size. Small FortiSwitch memory and flash sizes are shown in GB (for example 0.25 GB = 256 MB).
 

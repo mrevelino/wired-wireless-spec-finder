@@ -80,9 +80,9 @@ add(dict(vendor="HPE Aruba", deployment="Cloud", verified=P), family="HPE Aruba 
 # ---------------- Juniper (HPE Mist) ----------------
 add(dict(vendor="Juniper", deployment="Cloud", verified=P), family="Juniper Mist", model="Juniper Mist cloud (HPE Mist)", form="Cloud service",
     size="Hosted by HPE Mist", max_aps=None, max_aps_text="No fixed limit (subscription per AP)", max_clients=None, throughput_gbps=None,
-    throughput_text="Local switching at the AP (or tunnelled to Mist Edge)", ports=None, ha="Microservices cloud, HPE-hosted", psu_redundant=None,
+    throughput_text="Local switching at the AP", ports=None, ha="Microservices cloud, HPE-hosted", psu_redundant=None,
     datasheet="https://www.hpe.com/psnow/doc/a00150816enw",
-    notes="Juniper APs are managed only from the Mist cloud; there is no on-premises wireless controller. Mist Edge (below) adds on-site tunnel termination.")
+    notes="Juniper APs are managed only from the Mist cloud; there is no on-premises wireless controller. The ME-X1/X5/X10 Mist Edge appliances are end of life.")
 me = dict(vendor="Juniper", family="Mist Edge", deployment="On-premises", form="Appliance (tunnel termination)", ha="Clustered Mist Edges")
 add(me, model="Mist Edge ME-X1", size=None, max_aps=500, max_aps_text=None, max_clients=5000, throughput_gbps=2, throughput_text=None,
     ports="2x 1G RJ-45 data", psu_redundant="No", verified=V,
@@ -116,6 +116,14 @@ add(dict(vendor="Fortinet", deployment="Cloud", verified=P), family="FortiManage
     size="Hosted by Fortinet", max_aps=None, max_aps_text="A handful to thousands of FortiAPs", max_clients=None, throughput_gbps=None,
     throughput_text="Local switching at the AP", ports=None, ha="Fortinet-hosted service", psu_redundant=None, datasheet=FMX,
     notes="Hosted cloud control of standalone FortiAPs; a subscription adds advanced features, troubleshooting and log retention.")
+
+# ---------------- End of life: removed (checked 15 Nov 2026) ----------------
+EOL_REMOVED = {'Catalyst 9800-80': 'Cisco EOL15034: C9800-80 end of sale 31 Dec 2025',
+    'Catalyst 9800-40': 'Cisco EOL15034: C9800-40 end of sale 31 Dec 2025',
+    'Mist Edge ME-X1': 'Juniper TSB102624: ME-X1 last order 15 Oct 2025',
+    'Mist Edge ME-X5': 'Juniper TSB89506: ME-X5 last order 15 Jan 2025',
+    'Mist Edge ME-X10': 'Juniper TSB89506: ME-X10 last order 15 Jan 2025'}
+rows = [r for r in rows if r['model'] not in EOL_REMOVED]
 
 cols = ["vendor", "family", "model", "deployment", "form", "size", "max_aps", "max_aps_text", "max_clients", "throughput_gbps", "throughput_text",
         "ports", "ha", "psu_redundant", "verified", "notes", "datasheet"]

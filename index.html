@@ -200,7 +200,7 @@ window.dash = (function () {
     <p class="sf-lede">Compare campus switches, Wi-Fi access points and wireless controllers from Cisco, HPE Aruba, Juniper and Fortinet, checked against each vendor's datasheet. <b data-draw="count">—</b> of <b data-draw="total" data-source="total_models">—</b> switches, <b data-draw="apcount">—</b> of <b data-draw="aptotal" data-source="total_aps">—</b> access points, and <b data-draw="wlccount">—</b> of <b data-draw="wlctotal" data-source="total_wlc">—</b> wireless controllers match your filters.</p>
   </header>
 
-  <p class="sf-note" id="sf-caveat">Checked on 13 Nov 2026 against the Cisco datasheets, HPE Aruba QuickSpecs, HPE-hosted Juniper datasheets and Fortinet FortiSwitch datasheets linked in each row. FortiSwitch rows are partly verified because Fortinet lists routing and MACsec features per family, not per model, and FortiSwitches are managed from a FortiGate (FortiLink) rather than stacked. The Verified column says how much of a row was confirmed, and a dash means the datasheet doesn't state that value. Juniper EX4300 is no longer published, so its rows are unverified. Aruba has no CX 6001, 6002 or 6003; the CX 6000 family is the 6000, 6100, 6200, 6300 and 6400 series, all listed here. Access points were checked on 14 Nov 2026 against the Cisco, HPE Aruba, HPE Mist (Juniper) and Fortinet AP datasheets.</p>
+  <p class="sf-note" id="sf-caveat">Checked on 13 Nov 2026 against the Cisco datasheets, HPE Aruba QuickSpecs, HPE-hosted Juniper datasheets and Fortinet FortiSwitch datasheets linked in each row. FortiSwitch rows are partly verified because Fortinet lists routing and MACsec features per family, not per model, and FortiSwitches are managed from a FortiGate (FortiLink) rather than stacked. The Verified column says how much of a row was confirmed, and a dash means the datasheet doesn't state that value. Juniper no longer publishes an EX4300 datasheet, so the EX4300-48MP row is unverified. End-of-life models (vendor end-of-sale notices checked 15 Nov 2026) have been removed. Aruba has no CX 6001, 6002 or 6003; the CX 6000 family is the 6000, 6100, 6200, 6300 and 6400 series, all listed here. Access points were checked on 14 Nov 2026 against the Cisco, HPE Aruba, HPE Mist (Juniper) and Fortinet AP datasheets.</p>
 
   <div class="sf-layout">
   <nav class="sf-side" id="sf-nav" aria-label="Page sections">
@@ -620,7 +620,7 @@ window.dash = (function () {
       <h2 id="wlc-h">Wireless controllers</h2>
       <button type="button" class="sf-btn" id="w-reset">Reset controller filters</button>
     </div>
-    <p class="sf-muted"><b data-draw="wlccount">—</b> of <b data-draw="wlctotal" data-source="total_wlc">—</b> controllers match: on-premises appliances, virtual and embedded controllers, and cloud management services. Juniper has no on-premises controller; its APs are managed from the Mist cloud, with optional Mist Edge appliances on site. Every FortiGate firewall includes the Fortinet wireless controller.</p>
+    <p class="sf-muted"><b data-draw="wlccount">—</b> of <b data-draw="wlctotal" data-source="total_wlc">—</b> controllers match: on-premises appliances, virtual and embedded controllers, and cloud management services. Juniper has no on-premises controller; its APs are managed from the Mist cloud. Every FortiGate firewall includes the Fortinet wireless controller.</p>
     <div class="sf-filters" id="wlc-filters">
       <div class="sf-field sf-wide">
         <span class="sf-legend">Vendor</span>
@@ -633,7 +633,7 @@ window.dash = (function () {
       </div>
       <div class="sf-field">
         <label for="w-q">Search model or family</label>
-        <input type="search" id="w-q" placeholder="e.g. 9800, 9240, Mist Edge">
+        <input type="search" id="w-q" placeholder="e.g. 9800, 9240, FortiGate">
       </div>
       <div class="sf-field">
         <label for="w-dep">Deployment</label>
