@@ -1,5 +1,5 @@
-"""Generate data/routers.json: current enterprise routers from Cisco, HPE Aruba and Juniper (checked 15 Nov 2026).
-End-of-life models are excluded (see README). Fortinet is excluded by request."""
+"""Generate data/routers.json: current enterprise routers from Cisco and Juniper (checked 15 Nov 2026).
+End-of-life models are excluded (see README). HPE Aruba and Fortinet are excluded by request."""
 import json, sys
 
 V, P = "Verified", "Partly verified"
@@ -144,8 +144,10 @@ EOL_EXCLUDED = {
     "Cisco ISR 1100/1100X, 1101, 1109, 1111": "end of sale 28 Jul 2026",
     "Cisco ISR 1112/1113/1116/1117/1131/1161": "EOL15945, end of sale 31 Jan 2027",
     "Juniper MX204": "TSB107750, last order 15 Jun 2027",
-    "HPE Aruba EdgeConnect EC-S-P": "end of sale 31 Dec 2024 (HPE warranty quick reference)",
 }
+
+# HPE Aruba EdgeConnect rows are kept above for reference but left out of the output by request.
+rows = [r for r in rows if r["vendor"] in ("Cisco", "Juniper")]
 
 cols = ["vendor", "family", "model", "segment", "form", "ports", "port_max_gbps", "throughput_gbps", "ipsec_gbps", "throughput_text",
         "dram_gb", "storage_gb", "slots", "cellular", "psu_redundant", "max_sessions", "sdwan", "verified", "notes", "datasheet"]
@@ -155,7 +157,7 @@ for r in rows:
     if missing: sys.exit(f"{r.get('model')}: missing {missing}")
     out.append({k: r[k] for k in cols})
 assert len({o["model"] for o in out}) == len(out), "duplicate model"
-json.dump({"rows": out, "meta": [{"label": "How made", "value": "Checked by Claude on 15 Nov 2026 against Cisco 8000 Secure Router, ISR 1000 and Catalyst 8000V datasheets, the HPE Aruba EdgeConnect SD-WAN QuickSpecs and HPE-hosted Juniper SSR and MX datasheets. End-of-life models excluded."},
+json.dump({"rows": out, "meta": [{"label": "How made", "value": "Checked by Claude on 15 Nov 2026 against Cisco 8000 Secure Router, ISR 1000 and Catalyst 8000V datasheets, and HPE-hosted Juniper SSR and MX datasheets. End-of-life models excluded; HPE Aruba and Fortinet not included."},
                              {"label": "End-of-life models excluded", "value": "; ".join(f"{k}: {v}" for k, v in EOL_EXCLUDED.items())}]},
           open(sys.argv[1], "w"), indent=0)
 from collections import Counter

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Enterprise Campus Wired and Wireless Spec Finder</title>
-<meta name="description" content="Search and compare Cisco Catalyst, HPE Aruba CX, Juniper EX and Fortinet FortiSwitch switches, Cisco, Aruba, Juniper Mist and FortiAP access points, on-premises and cloud wireless controllers, and Cisco, HPE Aruba and Juniper enterprise routers; export to Excel or PDF.">
+<meta name="description" content="Search and compare Cisco Catalyst, HPE Aruba CX, Juniper EX and Fortinet FortiSwitch switches, Cisco, Aruba, Juniper Mist and FortiAP access points, on-premises and cloud wireless controllers, and Cisco and Juniper enterprise routers; export to Excel or PDF.">
 <style>
 :root {
   --color-fg: #17202b; --color-fg-muted: #5b6675; --color-bg: #f6f7f9; --color-panel: #ffffff;
@@ -118,6 +118,8 @@ window.dash = (function () {
 .sf-tab-top:hover { border-radius: var(--cds-radius); }
 .sf [hidden] { display: none !important; }
 #wlc, #rtr { border-top: 3px solid var(--sf-cisco); }
+#rtrcompare { border-top: 3px solid var(--sf-hpe); }
+#rtrcompare h2::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 8px; vertical-align: 1px; background: var(--sf-hpe); }
 #wlc h2::before, #rtr h2::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 8px; vertical-align: 1px; background: var(--sf-cisco); }
 .sf-notes-box { border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); }
 .sf-notes-box summary { cursor: pointer; font-weight: var(--cds-font-weight-medium); }
@@ -197,7 +199,7 @@ window.dash = (function () {
   <header id="sf-head" class="sf-head">
     <h1>Enterprise Campus Wired and Wireless Spec Finder</h1>
     <div class="sf-brandbar" aria-hidden="true"><span class="b1"></span><span class="b2"></span><span class="b3"></span></div>
-    <p class="sf-lede">Compare campus switches, Wi-Fi access points, wireless controllers and enterprise routers from Cisco, HPE Aruba, Juniper and Fortinet, checked against each vendor's datasheet. <b data-draw="count">—</b> of <b data-draw="total" data-source="total_models">—</b> switches, <b data-draw="apcount">—</b> of <b data-draw="aptotal" data-source="total_aps">—</b> access points, <b data-draw="wlccount">—</b> of <b data-draw="wlctotal" data-source="total_wlc">—</b> wireless controllers and <b data-draw="rtrcount">—</b> of <b data-draw="rtrtotal" data-source="total_rtr">—</b> routers match your filters.</p>
+    <p class="sf-lede">Compare campus switches, Wi-Fi access points and wireless controllers from Cisco, HPE Aruba, Juniper and Fortinet, and enterprise routers from Cisco and Juniper, checked against each vendor's datasheet. <b data-draw="count">—</b> of <b data-draw="total" data-source="total_models">—</b> switches, <b data-draw="apcount">—</b> of <b data-draw="aptotal" data-source="total_aps">—</b> access points, <b data-draw="wlccount">—</b> of <b data-draw="wlctotal" data-source="total_wlc">—</b> wireless controllers and <b data-draw="rtrcount">—</b> of <b data-draw="rtrtotal" data-source="total_rtr">—</b> routers match your filters.</p>
   </header>
 
   <p class="sf-note" id="sf-caveat">Checked on 13 Nov 2026 against the Cisco datasheets, HPE Aruba QuickSpecs, HPE-hosted Juniper datasheets and Fortinet FortiSwitch datasheets linked in each row. FortiSwitch rows are partly verified because Fortinet lists routing and MACsec features per family, not per model, and FortiSwitches are managed from a FortiGate (FortiLink) rather than stacked. The Verified column says how much of a row was confirmed, and a dash means the datasheet doesn't state that value. Juniper no longer publishes an EX4300 datasheet, so the EX4300-48MP row is unverified. End-of-life models (vendor end-of-sale notices checked 15 Nov 2026) have been removed. Aruba has no CX 6001, 6002 or 6003; the CX 6000 family is the 6000, 6100, 6200, 6300 and 6400 series, all listed here. Access points were checked on 14 Nov 2026 against the Cisco, HPE Aruba, HPE Mist (Juniper) and Fortinet AP datasheets.</p>
@@ -236,6 +238,11 @@ window.dash = (function () {
       <span class="sf-tab-mark sf-mark-blue" aria-hidden="true"></span>
       <span class="sf-tab-label">Routers</span>
       <b class="sf-tab-badge" data-draw="navrtr">—</b>
+    </button>
+    <button type="button" class="sf-tab" data-target="rtrcompare">
+      <span class="sf-tab-mark sf-mark-green" aria-hidden="true"></span>
+      <span class="sf-tab-label">Router comparison</span>
+      <b class="sf-tab-badge" data-draw="navrtrcmp">—</b>
     </button>
     <div class="sf-export" id="sf-export" hidden>
       <span class="sf-side-title">Export</span>
@@ -723,19 +730,18 @@ window.dash = (function () {
       <h2 id="rtr-h">Enterprise routers</h2>
       <button type="button" class="sf-btn" id="r-reset">Reset router filters</button>
     </div>
-    <p class="sf-muted"><b data-draw="rtrcount">—</b> of <b data-draw="rtrtotal" data-source="total_rtr">—</b> current branch, WAN-edge and SD-WAN routers from Cisco, HPE Aruba and Juniper match. End-of-life models are left out; Fortinet is not included. Throughput is shown as each vendor states it (forwarding, IPsec or SD-WAN, and packet size differ), so compare within a vendor first.</p>
+    <p class="sf-muted"><b data-draw="rtrcount">—</b> of <b data-draw="rtrtotal" data-source="total_rtr">—</b> current branch, WAN-edge and SD-WAN routers from Cisco and Juniper match. End-of-life models are left out. Throughput is shown as each vendor states it (forwarding, IPsec or SD-WAN, and packet size differ), so compare within a vendor first. Tick up to 4 routers to compare them below.</p>
     <div class="sf-filters" id="rtr-filters">
       <div class="sf-field sf-wide">
         <span class="sf-legend">Vendor</span>
         <div class="sf-checks">
           <label><input type="checkbox" class="rtr-vendor" id="r-v-cisco" value="Cisco" checked> Cisco</label>
-          <label><input type="checkbox" class="rtr-vendor" id="r-v-aruba" value="HPE Aruba" checked> HPE Aruba EdgeConnect</label>
           <label><input type="checkbox" class="rtr-vendor" id="r-v-juniper" value="Juniper" checked> Juniper</label>
         </div>
       </div>
       <div class="sf-field">
         <label for="r-q">Search model or family</label>
-        <input type="search" id="r-q" placeholder="e.g. C8375, EC-10108, SSR1400">
+        <input type="search" id="r-q" placeholder="e.g. C8375, SSR1400, MX304">
       </div>
       <div class="sf-field">
         <label for="r-seg">Site size / role</label>
@@ -789,11 +795,12 @@ window.dash = (function () {
       </div>
     </div>
     <div class="sf-chips" data-draw="rtrvendorsum" aria-label="Router matches by vendor"></div>
-    <p class="sf-muted">Click a column heading to sort.</p>
+    <p class="sf-muted">Tick up to 4 routers to compare them. Click a column heading to sort.</p>
     <div class="sf-scroll">
       <table class="sf-table" id="rtr-table" data-source="rtr" data-row-key="model">
         <thead>
           <tr>
+            <th scope="col">Compare</th>
             <th scope="col" class="rt-sort sf-sort" tabindex="0" data-k="model" data-field="model">Model</th>
             <th scope="col" class="rt-sort sf-sort" tabindex="0" data-k="vendor" data-field="vendor">Vendor</th>
             <th scope="col" data-field="segment">Site / role</th>
@@ -819,6 +826,44 @@ window.dash = (function () {
       <summary>Notes for each router</summary>
       <dl class="sf-notes-list" data-draw="rtrnotes"></dl>
     </details>
+  </section>
+
+  <section class="sf-card" id="rtrcompare" aria-labelledby="rtrcmp-h">
+    <div class="sf-bar">
+      <h2 id="rtrcmp-h">Router comparison</h2>
+      <button type="button" class="sf-btn" id="rtrcmp-clear">Clear comparison</button>
+    </div>
+    <p class="sf-muted" id="rtrcmp-empty" hidden>Tick routers in the table above to compare them side by side.</p>
+    <p class="sf-muted" id="rtrcmp-hint" hidden>The best value in each numeric row is shown in green. Throughput figures are each vendor's own measure, so compare them within a vendor.</p>
+    <div class="sf-cmp-wrap">
+      <div class="sf-cmp" id="rtrcmp-grid" data-source="rtr">
+        <div class="sf-cmp-row sf-cmp-head"><div class="sf-cmp-label">Model</div><div class="sf-cmp-vals" data-draw="rtrcmp" data-f="model"></div></div>
+        <div class="sf-cmp-row"><div class="sf-cmp-label">Vendor</div><div class="sf-cmp-vals" data-draw="rtrcmp" data-f="vendor"></div></div>
+        <div class="sf-cmp-row"><div class="sf-cmp-label">Family</div><div class="sf-cmp-vals" data-draw="rtrcmp" data-f="family"></div></div>
+        <div class="sf-cmp-row"><div class="sf-cmp-label">Site / role</div><div class="sf-cmp-vals" data-draw="rtrcmp" data-f="segment"></div></div>
+        <div class="sf-cmp-row"><div class="sf-cmp-label">Form factor</div><div class="sf-cmp-vals" data-draw="rtrcmp" data-f="form"></div></div>
+
+        <div class="sf-cmp-group">Interfaces</div>
+        <div class="sf-cmp-row"><div class="sf-cmp-label">Ports</div><div class="sf-cmp-vals" data-draw="rtrcmp" data-f="ports"></div></div>
+        <div class="sf-cmp-row"><div class="sf-cmp-label">Fastest port (Gbps)</div><div class="sf-cmp-vals" data-draw="rtrcmp" data-f="port_max_gbps" data-best="max"></div></div>
+        <div class="sf-cmp-row"><div class="sf-cmp-label">Module slots</div><div class="sf-cmp-vals" data-draw="rtrcmp" data-f="slots"></div></div>
+        <div class="sf-cmp-row"><div class="sf-cmp-label">Cellular (LTE / 5G)</div><div class="sf-cmp-vals" data-draw="rtrcmp" data-f="cellular"></div></div>
+
+        <div class="sf-cmp-group">Performance and hardware</div>
+        <div class="sf-cmp-row"><div class="sf-cmp-label">Headline throughput (Gbps)</div><div class="sf-cmp-vals" data-draw="rtrcmp" data-f="throughput_gbps" data-best="max"></div></div>
+        <div class="sf-cmp-row"><div class="sf-cmp-label">IPsec / encrypted (Gbps)</div><div class="sf-cmp-vals" data-draw="rtrcmp" data-f="ipsec_gbps" data-best="max"></div></div>
+        <div class="sf-cmp-row"><div class="sf-cmp-label">Throughput as stated</div><div class="sf-cmp-vals" data-draw="rtrcmp" data-f="throughput_text"></div></div>
+        <div class="sf-cmp-row"><div class="sf-cmp-label">DRAM (GB)</div><div class="sf-cmp-vals" data-draw="rtrcmp" data-f="dram_gb" data-best="max"></div></div>
+        <div class="sf-cmp-row"><div class="sf-cmp-label">Storage (GB)</div><div class="sf-cmp-vals" data-draw="rtrcmp" data-f="storage_gb" data-best="max"></div></div>
+        <div class="sf-cmp-row"><div class="sf-cmp-label">Redundant power</div><div class="sf-cmp-vals" data-draw="rtrcmp" data-f="psu_redundant"></div></div>
+        <div class="sf-cmp-row"><div class="sf-cmp-label">SD-WAN / management</div><div class="sf-cmp-vals" data-draw="rtrcmp" data-f="sdwan"></div></div>
+
+        <div class="sf-cmp-group">Source</div>
+        <div class="sf-cmp-row"><div class="sf-cmp-label">Verification</div><div class="sf-cmp-vals" data-draw="rtrcmp" data-f="verified"></div></div>
+        <div class="sf-cmp-row"><div class="sf-cmp-label">Datasheet notes</div><div class="sf-cmp-vals" data-draw="rtrcmp" data-f="notes"></div></div>
+        <div class="sf-cmp-row"><div class="sf-cmp-label">Datasheet</div><div class="sf-cmp-vals" data-draw="rtrcmp" data-f="datasheet"></div></div>
+      </div>
+    </div>
   </section>
   </div>
   </div>
@@ -918,14 +963,14 @@ window.sfRedraw = function () { ['results', 'count', 'vendorsum', 'navcount'].fo
     return se.scrollTop > 0 && se.scrollHeight - (se.scrollTop + window.innerHeight) < 8;
   };
   /* The section in view is the last one whose top has passed 30% of the window height. */
-  const ids = ['requirements', 'compare', 'aps', 'apcompare', 'wlc', 'rtr'];
+  const ids = ['requirements', 'compare', 'aps', 'apcompare', 'wlc', 'rtr', 'rtrcompare'];
   let ticking = false;
   const update = () => {
     ticking = false;
     let best = ids[0];
     const line = window.innerHeight * 0.3;
     ids.forEach((id) => { const el = document.getElementById(id); if (el && el.getBoundingClientRect().top <= line) best = id; });
-    if (atBottom()) best = 'rtr';
+    if (atBottom()) best = 'rtrcompare';
     setActive(best);
   };
   window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
@@ -1389,13 +1434,14 @@ window.apRedraw = function () { ['apresults', 'apcount', 'apvendorsum', 'navap']
     const wlRows = wl.status === 'ok' && window.wlcFilter ? window.sfSortRows(window.wlcFilter(wl.data), window.wlcState.sort) : [];
     const rt = dash.data('rtr');
     const rtRows = rt.status === 'ok' && window.rtrFilter ? window.sfSortRows(window.rtrFilter(rt.data), window.rtrState.sort) : [];
-    return { swRows, apRows, swCmp, apCmp, wlRows, rtRows };
+    const rtCmp = rt.status === 'ok' && window.rtrState ? window.rtrState.sel.map((m) => rt.data.find((r) => r.model === m)).filter(Boolean) : [];
+    return { swRows, apRows, swCmp, apCmp, wlRows, rtRows, rtCmp };
   };
   const stamp = () => new Date().toISOString().slice(0, 10);
 
   async function toXlsx() {
     await load('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
-    const { swRows, apRows, swCmp, apCmp, wlRows, rtRows } = data();
+    const { swRows, apRows, swCmp, apCmp, wlRows, rtRows, rtCmp } = data();
     const wb = XLSX.utils.book_new();
     const table = (defs, rows) => [defs.map((d) => d[1])].concat(rows.map((r) => defs.map((d) => cell(r[d[0]]))));
     const cmp = (defs, picked) => [['Spec'].concat(picked.map((r) => r.model))].concat(defs.slice(1).map((d) => [d[1]].concat(picked.map((r) => cell(r[d[0]])))));
@@ -1406,6 +1452,7 @@ window.apRedraw = function () { ['apresults', 'apcount', 'apvendorsum', 'navap']
     if (apCmp.length) add('AP comparison', cmp(AP, apCmp), [22].concat(apCmp.map(() => 34)));
     add('Wireless controllers', table(WL, wlRows), WL.map((d) => (d[0] === 'notes' ? 60 : d[0] === 'datasheet' ? 50 : Math.max(12, d[1].length + 2))));
     add('Routers', table(RT, rtRows), RT.map((d) => (d[0] === 'notes' ? 60 : d[0] === 'datasheet' ? 50 : d[0] === 'throughput_text' || d[0] === 'ports' ? 40 : Math.max(12, d[1].length + 2))));
+    if (rtCmp.length) add('Router comparison', cmp(RT, rtCmp), [26].concat(rtCmp.map(() => 36)));
     add('About', [['Enterprise Campus Wired and Wireless Spec Finder'], ['Exported', new Date().toLocaleString()], ['Switches exported', swRows.length], ['Access points exported', apRows.length], ['Wireless controllers exported', wlRows.length], ['Routers exported', rtRows.length],
       ['Note', 'Rows reflect the filters and sort order on the page. Confirm figures on the linked vendor datasheet before quoting.'],
       ['Source', 'https://mrevelino.github.io/wired-wireless-spec-finder/']], [24, 90]);
@@ -1415,7 +1462,7 @@ window.apRedraw = function () { ['apresults', 'apcount', 'apvendorsum', 'navap']
   async function toPdf() {
     await load('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
     await load('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js');
-    const { swRows, apRows, swCmp, apCmp, wlRows, rtRows } = data();
+    const { swRows, apRows, swCmp, apCmp, wlRows, rtRows, rtCmp } = data();
     const doc = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
     const blue = [0, 80, 115], green = [1, 169, 130];
     let first = true;
@@ -1449,6 +1496,10 @@ window.apRedraw = function () { ['apresults', 'apcount', 'apvendorsum', 'navap']
     heading('Enterprise routers (' + rtRows.length + ')', 'Current routers matching the page filters. Throughput as each vendor states it.');
     tbl(['Model', 'Vendor', 'Site / role', 'Form', 'Ports', 'Fastest port', 'Throughput (as stated)', 'DRAM', 'Cellular', 'Redundant power', 'Verified'],
       rtRows.map((r) => [r.model, r.vendor, txt(r.segment), txt(r.form), txt(r.ports), txt(r.port_max_gbps), txt(r.throughput_text), txt(r.dram_gb), txt(r.cellular), txt(r.psu_redundant), txt(r.verified)]), blue);
+    if (rtCmp.length) {
+      heading('Router comparison', 'Selected routers side by side.');
+      tbl(['Spec'].concat(rtCmp.map((r) => r.model)), RT.slice(1).map((d) => [d[1]].concat(rtCmp.map((r) => txt(r[d[0]])))), green, { columnStyles: { 0: { fontStyle: 'bold', cellWidth: 110 } } });
+    }
     const n = doc.getNumberOfPages();
     for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFontSize(8); doc.setTextColor(120); doc.text('Enterprise Campus Wired and Wireless Spec Finder - page ' + i + ' of ' + n, 36, doc.internal.pageSize.getHeight() - 18); }
     doc.save('wired-wireless-spec-finder-' + stamp() + '.pdf');
@@ -1630,7 +1681,7 @@ dash.calc('total_rtr', {
   fn: (rtr) => rtr.length
 });
 
-window.rtrState = window.rtrState || { sort: { key: 'throughput_gbps', dir: -1 } };
+window.rtrState = window.rtrState || { sort: { key: 'throughput_gbps', dir: -1 }, sel: [] };
 
 window.rtrFilter = function (rows) {
   const val = (id) => { const el = document.getElementById(id); return el ? el.value : ''; };
@@ -1657,6 +1708,11 @@ window.rtrFilter = function (rows) {
 };
 
 window.rtrRedraw = function () { ['rtrresults', 'rtrcount', 'rtrvendorsum', 'navrtr', 'rtrnotes'].forEach((n) => dash.draw(n)); };
+
+(function () {
+  const clear = document.getElementById('rtrcmp-clear');
+  if (clear) clear.addEventListener('click', () => { window.rtrState.sel = []; ['rtrcmp', 'rtrresults', 'navrtrcmp'].forEach((n) => dash.draw(n)); });
+})();
 
 (function () {
   const redraw = () => window.rtrRedraw();
@@ -1688,7 +1744,7 @@ window.rtrRedraw = function () { ['rtrresults', 'rtrcount', 'rtrvendorsum', 'nav
 (function () {
   const fmt = d3.format(',');
   const show = (v) => (v == null || v === '' ? '—' : (typeof v === 'number' ? fmt(v) : String(v)));
-  const vendorColor = { 'Cisco': 'var(--sf-cisco)', 'HPE Aruba': 'var(--sf-hpe)', 'Juniper': 'var(--sf-juniper)' };
+  const vendorColor = { 'Cisco': 'var(--sf-cisco)', 'Juniper': 'var(--sf-juniper)' };
   const rowsNow = () => {
     const d = dash.data('rtr');
     return d.status === 'ok' ? window.sfSortRows(window.rtrFilter(d.data), window.rtrState.sort) : null;
@@ -1703,7 +1759,7 @@ window.rtrRedraw = function () { ['rtrresults', 'rtrcount', 'rtrvendorsum', 'nav
     el.replaceChildren();
     const rows = rowsNow();
     if (!rows) return;
-    ['Cisco', 'HPE Aruba', 'Juniper'].forEach((v) => {
+    ['Cisco', 'Juniper'].forEach((v) => {
       const chip = document.createElement('span');
       chip.className = 'sf-chip';
       const dot = document.createElement('span');
@@ -1726,6 +1782,22 @@ window.rtrRedraw = function () { ['rtrresults', 'rtrcount', 'rtrvendorsum', 'nav
     rows.forEach((r) => {
       const tr = document.createElement('tr');
       tr.dataset.key = encodeURIComponent(r.model);
+      const st = window.rtrState;
+      const picked = st.sel.includes(r.model);
+      if (picked) tr.className = 'sf-picked';
+      const tdc = document.createElement('td');
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = picked;
+      cb.disabled = !picked && st.sel.length >= 4;
+      cb.setAttribute('aria-label', 'Compare ' + r.model);
+      cb.addEventListener('change', () => {
+        if (cb.checked) { if (!st.sel.includes(r.model) && st.sel.length < 4) st.sel.push(r.model); }
+        else st.sel = st.sel.filter((m) => m !== r.model);
+        ['rtrresults', 'rtrcmp', 'navrtrcmp'].forEach((n) => dash.draw(n));
+      });
+      tdc.append(cb);
+      tr.append(tdc);
       const cell = (text, cls) => { const td = document.createElement('td'); if (cls) td.className = cls; td.textContent = text; tr.append(td); return td; };
       const tdm = document.createElement('td');
       const b = document.createElement('b'); b.textContent = r.model; tdm.append(b); tr.append(tdm);
@@ -1759,6 +1831,59 @@ window.rtrRedraw = function () { ['rtrresults', 'rtrcount', 'rtrvendorsum', 'nav
       tbody.append(tr);
     });
   });
+  dash.draw('navrtrcmp', (el) => { el.textContent = window.rtrState.sel.length + '/4'; });
+
+  dash.draw('rtrcmp', (el) => {
+    const d = dash.data('rtr');
+    el.replaceChildren();
+    const f = el.dataset.f;
+    const picked = d.status === 'ok' ? window.rtrState.sel.map((m) => d.data.find((r) => r.model === m)).filter(Boolean) : [];
+    if (f === 'model') {
+      const grid = el.closest('.sf-cmp');
+      if (grid) {
+        grid.style.setProperty('--n', Math.max(1, picked.length));
+        grid.classList.toggle('sf-cmp-isempty', d.status === 'ok' && picked.length === 0);
+      }
+      const empty = document.getElementById('rtrcmp-empty');
+      const hint = document.getElementById('rtrcmp-hint');
+      if (empty) empty.hidden = picked.length > 0 || d.status !== 'ok';
+      if (hint) hint.hidden = picked.length < 2;
+    }
+    if (!picked.length) {
+      const c = document.createElement('div');
+      c.className = 'sf-cmp-cell';
+      c.textContent = '—';
+      el.append(c);
+      return;
+    }
+    let best = null;
+    if (el.dataset.best === 'max' && picked.length > 1) {
+      const vals = picked.map((r) => r[f]).filter((v) => typeof v === 'number');
+      if (vals.length) best = Math.max(...vals);
+      if (vals.length && vals.every((v) => v === best)) best = null;
+    }
+    picked.forEach((r) => {
+      const c = document.createElement('div');
+      c.className = 'sf-cmp-cell';
+      c.dataset.source = 'rtr';
+      c.dataset.where = 'model=' + encodeURIComponent(r.model);
+      c.dataset.field = f;
+      const v = r[f];
+      if (f === 'datasheet') {
+        if (typeof v === 'string' && v.startsWith('https://')) {
+          const a = document.createElement('a');
+          a.href = v; a.target = '_blank'; a.rel = 'noopener noreferrer';
+          a.textContent = 'Open datasheet';
+          c.append(a);
+        } else c.textContent = '—';
+      }
+      else if (['notes', 'ports', 'throughput_text', 'sdwan', 'cellular', 'slots'].includes(f)) { c.classList.add('sf-wrapcell'); c.textContent = show(v); }
+      else c.textContent = show(v);
+      if (best !== null && v === best) c.classList.add('sf-best');
+      el.append(c);
+    });
+  });
+
   dash.draw('rtrnotes', (dl) => {
     dl.replaceChildren();
     const rows = rowsNow();
