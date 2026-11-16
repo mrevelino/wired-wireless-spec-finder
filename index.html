@@ -103,6 +103,7 @@ window.dash = (function () {
 .sf-main { display: grid; gap: var(--cds-gap-xl); min-width: 0; }
 .sf-main > section { scroll-margin-top: 16px; }
 .sf-side { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); display: flex; flex-direction: column; gap: 6px; background: var(--color-panel); border: 1px solid var(--color-border-line); border-top: 3px solid var(--sf-cisco); border-radius: var(--cds-radius); padding: var(--cds-pad-md); z-index: 5; }
+@media (min-width: 861px) { .sf-side { max-height: calc(100vh - env(safe-area-inset-top, 0px) - 32px); overflow-y: auto; overscroll-behavior: contain; } }
 .sf-side-title { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); text-transform: uppercase; letter-spacing: .05em; padding: 0 8px 4px; }
 .sf-tab { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; font: inherit; color: var(--color-fg); background: transparent; border: 0; border-radius: var(--cds-radius); padding: 9px 10px; cursor: pointer; }
 .sf-tab:hover { background: var(--sf-tint-blue); }
@@ -132,12 +133,25 @@ window.dash = (function () {
 .sf-export-btn { width: 100%; text-align: left; font-size: var(--cds-font-size-caption); }
 .sf-export-btn:disabled { opacity: .6; cursor: progress; }
 .sf-export-msg { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); padding: 0 4px; }
+.sf-exp-pick { position: relative; font-size: var(--cds-font-size-caption); }
+.sf-exp-pick > summary { cursor: pointer; list-style: none; padding: 6px 10px; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg-page, #fff); }
+.sf-exp-pick > summary::-webkit-details-marker { display: none; }
+.sf-exp-pick > summary::after { content: " ▾"; color: var(--color-fg-muted); }
+.sf-exp-pick[open] > summary::after { content: " ▴"; }
+.sf-exp-list { display: grid; gap: 4px; padding: 8px 4px 2px; }
+.sf-exp-list label { display: flex; gap: 6px; align-items: flex-start; cursor: pointer; line-height: 1.3; }
+.sf-exp-list label input { margin-top: 2px; }
+.sf-exp-list .sf-exp-sub { padding-left: 14px; }
+.sf-exp-quick { display: flex; gap: 8px; padding: 2px 4px 0; }
+.sf-exp-quick button { background: none; border: 0; padding: 0; color: var(--sf-cisco-dark, #005073); text-decoration: underline; cursor: pointer; font: inherit; }
 @media (max-width: 860px) {
   .sf-layout { grid-template-columns: minmax(0, 1fr); gap: var(--cds-gap-md); }
   .sf-side { flex-direction: row; overflow-x: auto; padding: 6px; gap: 4px; top: env(safe-area-inset-top, 0px); }
   .sf-side-title, .sf-tab-top, .sf-export-msg { display: none; }
   .sf-export { display: flex; margin: 0; padding: 0 0 0 6px; border-top: 0; border-left: 1px solid var(--color-border-line); gap: 4px; }
   .sf-export-btn { width: auto; white-space: nowrap; }
+  .sf-exp-pick > summary { white-space: nowrap; }
+  .sf-exp-pick[open] .sf-exp-body { position: fixed; left: 16px; right: 16px; top: 64px; z-index: 30; background: #fff; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: 10px; box-shadow: 0 8px 24px rgba(13, 39, 77, .18); max-height: 70vh; overflow: auto; }
   .sf-tab { width: auto; flex: none; white-space: nowrap; padding: 8px 10px; }
   .sf-main > section { scroll-margin-top: 72px; }
 }
@@ -246,6 +260,22 @@ window.dash = (function () {
     </button>
     <div class="sf-export" id="sf-export" hidden>
       <span class="sf-side-title">Export</span>
+      <details class="sf-exp-pick" id="exp-pick">
+        <summary id="exp-pick-sum">Sections: all</summary>
+        <div class="sf-exp-body">
+          <div class="sf-exp-quick"><button type="button" id="exp-all">All</button><button type="button" id="exp-none">None</button></div>
+          <div class="sf-exp-list" role="group" aria-label="Sections to export">
+            <label><input type="checkbox" class="exp-part" value="sw" checked> Switches</label>
+            <label class="sf-exp-sub"><input type="checkbox" class="exp-part" value="swCmp" checked> Switch comparison</label>
+            <label><input type="checkbox" class="exp-part" value="ap" checked> Access points</label>
+            <label class="sf-exp-sub"><input type="checkbox" class="exp-part" value="apCmp" checked> AP comparison</label>
+            <label><input type="checkbox" class="exp-part" value="wl" checked> Wireless controllers</label>
+            <label><input type="checkbox" class="exp-part" value="rt" checked> Routers</label>
+            <label class="sf-exp-sub"><input type="checkbox" class="exp-part" value="rtCmp" checked> Router comparison</label>
+          </div>
+          <p class="sf-muted" style="margin:6px 4px 0;font-size:inherit">Comparisons are included only when models are ticked.</p>
+        </div>
+      </details>
       <button type="button" class="sf-btn sf-export-btn" id="exp-xlsx">Excel (.xlsx)</button>
       <button type="button" class="sf-btn sf-export-btn" id="exp-pdf">PDF</button>
       <span class="sf-export-msg" id="exp-msg" role="status"></span>
@@ -1438,22 +1468,56 @@ window.apRedraw = function () { ['apresults', 'apcount', 'apvendorsum', 'navap']
     return { swRows, apRows, swCmp, apCmp, wlRows, rtRows, rtCmp };
   };
   const stamp = () => new Date().toISOString().slice(0, 10);
+  const parts = () => [...document.querySelectorAll('.exp-part')];
+  const NAMES = { sw: 'Switches', swCmp: 'Switch comparison', ap: 'Access points', apCmp: 'AP comparison', wl: 'Wireless controllers', rt: 'Routers', rtCmp: 'Router comparison' };
+  const picked = () => { const o = {}; parts().forEach((c) => { o[c.value] = c.checked; }); return o; };
+  const sumUp = () => {
+    const on = parts().filter((c) => c.checked);
+    const el = document.getElementById('exp-pick-sum');
+    if (el) el.textContent = 'Sections: ' + (on.length === parts().length ? 'all' : on.length === 0 ? 'none' : on.length === 1 ? NAMES[on[0].value] : on.length + ' of ' + parts().length);
+    try { localStorage.setItem('sf-export-parts', JSON.stringify(picked())); } catch (e) { /* storage unavailable */ }
+  };
+  try {
+    const saved = JSON.parse(localStorage.getItem('sf-export-parts') || 'null');
+    if (saved) parts().forEach((c) => { if (typeof saved[c.value] === 'boolean') c.checked = saved[c.value]; });
+  } catch (e) { /* storage unavailable */ }
+  parts().forEach((c) => c.addEventListener('change', sumUp));
+  const setAll = (v) => { parts().forEach((c) => { c.checked = v; }); sumUp(); };
+  const allB = document.getElementById('exp-all'), noneB = document.getElementById('exp-none');
+  if (allB) allB.addEventListener('click', () => setAll(true));
+  if (noneB) noneB.addEventListener('click', () => setAll(false));
+  document.addEventListener('click', (e) => { const d = document.getElementById('exp-pick'); if (d && d.open && !d.contains(e.target)) d.open = false; });
+  sumUp();
+  // what will actually be written, after applying the section choices
+  const chosen = () => {
+    const k = picked(), d = data();
+    const out = {
+      swRows: k.sw ? d.swRows : null, apRows: k.ap ? d.apRows : null, wlRows: k.wl ? d.wlRows : null, rtRows: k.rt ? d.rtRows : null,
+      swCmp: k.swCmp ? d.swCmp : [], apCmp: k.apCmp ? d.apCmp : [], rtCmp: k.rtCmp ? d.rtCmp : [],
+    };
+    const any = out.swRows || out.apRows || out.wlRows || out.rtRows || out.swCmp.length || out.apCmp.length || out.rtCmp.length;
+    if (!any) {
+      const onlyCmp = Object.keys(k).some((x) => k[x]);
+      throw Object.assign(new Error('nothing'), { userMsg: onlyCmp ? 'Nothing to export: the chosen comparisons have no models ticked.' : 'Choose at least one section to export.' });
+    }
+    return out;
+  };
 
   async function toXlsx() {
     await load('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
-    const { swRows, apRows, swCmp, apCmp, wlRows, rtRows, rtCmp } = data();
+    const { swRows, apRows, swCmp, apCmp, wlRows, rtRows, rtCmp } = chosen();
     const wb = XLSX.utils.book_new();
     const table = (defs, rows) => [defs.map((d) => d[1])].concat(rows.map((r) => defs.map((d) => cell(r[d[0]]))));
     const cmp = (defs, picked) => [['Spec'].concat(picked.map((r) => r.model))].concat(defs.slice(1).map((d) => [d[1]].concat(picked.map((r) => cell(r[d[0]])))));
     const add = (name, aoa, widths) => { const ws = XLSX.utils.aoa_to_sheet(aoa); ws['!cols'] = widths.map((w) => ({ wch: w })); XLSX.utils.book_append_sheet(wb, ws, name); };
-    add('Switches', table(SW, swRows), SW.map((d) => (d[0] === 'notes' ? 60 : d[0] === 'datasheet' ? 50 : Math.max(10, d[1].length + 2))));
+    if (swRows) add('Switches', table(SW, swRows), SW.map((d) => (d[0] === 'notes' ? 60 : d[0] === 'datasheet' ? 50 : Math.max(10, d[1].length + 2))));
     if (swCmp.length) add('Switch comparison', cmp(SW, swCmp), [22].concat(swCmp.map(() => 34)));
-    add('Access points', table(AP, apRows), AP.map((d) => (d[0] === 'notes' ? 60 : d[0] === 'datasheet' ? 50 : d[0] === 'radios' ? 40 : Math.max(10, d[1].length + 2))));
+    if (apRows) add('Access points', table(AP, apRows), AP.map((d) => (d[0] === 'notes' ? 60 : d[0] === 'datasheet' ? 50 : d[0] === 'radios' ? 40 : Math.max(10, d[1].length + 2))));
     if (apCmp.length) add('AP comparison', cmp(AP, apCmp), [22].concat(apCmp.map(() => 34)));
-    add('Wireless controllers', table(WL, wlRows), WL.map((d) => (d[0] === 'notes' ? 60 : d[0] === 'datasheet' ? 50 : Math.max(12, d[1].length + 2))));
-    add('Routers', table(RT, rtRows), RT.map((d) => (d[0] === 'notes' ? 60 : d[0] === 'datasheet' ? 50 : d[0] === 'throughput_text' || d[0] === 'ports' ? 40 : Math.max(12, d[1].length + 2))));
+    if (wlRows) add('Wireless controllers', table(WL, wlRows), WL.map((d) => (d[0] === 'notes' ? 60 : d[0] === 'datasheet' ? 50 : Math.max(12, d[1].length + 2))));
+    if (rtRows) add('Routers', table(RT, rtRows), RT.map((d) => (d[0] === 'notes' ? 60 : d[0] === 'datasheet' ? 50 : d[0] === 'throughput_text' || d[0] === 'ports' ? 40 : Math.max(12, d[1].length + 2))));
     if (rtCmp.length) add('Router comparison', cmp(RT, rtCmp), [26].concat(rtCmp.map(() => 36)));
-    add('About', [['Enterprise Campus Wired and Wireless Spec Finder'], ['Exported', new Date().toLocaleString()], ['Switches exported', swRows.length], ['Access points exported', apRows.length], ['Wireless controllers exported', wlRows.length], ['Routers exported', rtRows.length],
+    add('About', [['Enterprise Campus Wired and Wireless Spec Finder'], ['Exported', new Date().toLocaleString()], ['Switches exported', swRows ? swRows.length : 'not included'], ['Access points exported', apRows ? apRows.length : 'not included'], ['Wireless controllers exported', wlRows ? wlRows.length : 'not included'], ['Routers exported', rtRows ? rtRows.length : 'not included'],
       ['Note', 'Rows reflect the filters and sort order on the page. Confirm figures on the linked vendor datasheet before quoting.'],
       ['Source', 'https://mrevelino.github.io/wired-wireless-spec-finder/']], [24, 90]);
     XLSX.writeFile(wb, 'wired-wireless-spec-finder-' + stamp() + '.xlsx');
@@ -1462,7 +1526,7 @@ window.apRedraw = function () { ['apresults', 'apcount', 'apvendorsum', 'navap']
   async function toPdf() {
     await load('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
     await load('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js');
-    const { swRows, apRows, swCmp, apCmp, wlRows, rtRows, rtCmp } = data();
+    const { swRows, apRows, swCmp, apCmp, wlRows, rtRows, rtCmp } = chosen();
     const doc = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
     const blue = [0, 80, 115], green = [1, 169, 130];
     let first = true;
@@ -1478,23 +1542,27 @@ window.apRedraw = function () { ['apresults', 'apcount', 'apvendorsum', 'navap']
       headStyles: { fillColor: color, textColor: 255, fontStyle: 'bold' }, alternateRowStyles: { fillColor: [244, 247, 250] },
       margin: { left: 36, right: 36 } }, extra || {}));
     const when = 'Exported ' + new Date().toLocaleString() + ' from https://mrevelino.github.io/wired-wireless-spec-finder/ - rows follow the page filters. Confirm figures on the vendor datasheet.';
-    heading('Matching switches (' + swRows.length + ')', when);
-    tbl(SW_PDF.map((k) => label(SW, k)), swRows.map((r) => SW_PDF.map((k) => txt(r[k]))), blue);
+    if (swRows) {
+      heading('Matching switches (' + swRows.length + ')', when);
+      tbl(SW_PDF.map((k) => label(SW, k)), swRows.map((r) => SW_PDF.map((k) => txt(r[k]))), blue);
+    }
     if (swCmp.length) {
       heading('Switch comparison', 'Selected models side by side.');
       tbl(['Spec'].concat(swCmp.map((r) => r.model)), SW.slice(1).map((d) => [d[1]].concat(swCmp.map((r) => txt(r[d[0]])))), green, { columnStyles: { 0: { fontStyle: 'bold', cellWidth: 110 } } });
     }
-    heading('Matching access points (' + apRows.length + ')', when);
-    tbl(AP_PDF.map((k) => label(AP, k)), apRows.map((r) => AP_PDF.map((k) => txt(r[k]))), blue);
+    if (apRows) {
+      heading('Matching access points (' + apRows.length + ')', when);
+      tbl(AP_PDF.map((k) => label(AP, k)), apRows.map((r) => AP_PDF.map((k) => txt(r[k]))), blue);
+    }
     if (apCmp.length) {
       heading('Access point comparison', 'Selected access points side by side.');
       tbl(['Spec'].concat(apCmp.map((r) => r.model)), AP.slice(1).map((d) => [d[1]].concat(apCmp.map((r) => txt(r[d[0]])))), green, { columnStyles: { 0: { fontStyle: 'bold', cellWidth: 110 } } });
     }
-    heading('Wireless controllers (' + wlRows.length + ')', 'On-premises and cloud controllers matching the page filters.');
-    tbl(['Model', 'Vendor', 'Deployment', 'Type', 'Max APs', 'Max clients', 'Throughput', 'Network ports', 'Redundant PSU', 'Verified'],
+    if (wlRows) heading('Wireless controllers (' + wlRows.length + ')', 'On-premises and cloud controllers matching the page filters.');
+    if (wlRows) tbl(['Model', 'Vendor', 'Deployment', 'Type', 'Max APs', 'Max clients', 'Throughput', 'Network ports', 'Redundant PSU', 'Verified'],
       wlRows.map((r) => [r.model, r.vendor, txt(r.deployment), txt(r.form), wlAps(r), txt(r.max_clients), wlTp(r), txt(r.ports), txt(r.psu_redundant), txt(r.verified)]), blue);
-    heading('Enterprise routers (' + rtRows.length + ')', 'Current routers matching the page filters. Throughput as each vendor states it.');
-    tbl(['Model', 'Vendor', 'Site / role', 'Form', 'Ports', 'Fastest port', 'Throughput (as stated)', 'DRAM', 'Cellular', 'Redundant power', 'Verified'],
+    if (rtRows) heading('Enterprise routers (' + rtRows.length + ')', 'Current routers matching the page filters. Throughput as each vendor states it.');
+    if (rtRows) tbl(['Model', 'Vendor', 'Site / role', 'Form', 'Ports', 'Fastest port', 'Throughput (as stated)', 'DRAM', 'Cellular', 'Redundant power', 'Verified'],
       rtRows.map((r) => [r.model, r.vendor, txt(r.segment), txt(r.form), txt(r.ports), txt(r.port_max_gbps), txt(r.throughput_text), txt(r.dram_gb), txt(r.cellular), txt(r.psu_redundant), txt(r.verified)]), blue);
     if (rtCmp.length) {
       heading('Router comparison', 'Selected routers side by side.');
@@ -1510,8 +1578,9 @@ window.apRedraw = function () { ['apresults', 'apcount', 'apvendorsum', 'navap']
     if (!b) return;
     b.addEventListener('click', async () => {
       b.disabled = true; say('Preparing ' + name + '…');
+      const pk = document.getElementById('exp-pick'); if (pk) pk.open = false;
       try { await fn(); say(name + ' downloaded.'); }
-      catch (e) { console.error(e); say('Could not create the ' + name + '. Check your connection and try again.'); }
+      catch (e) { if (e && e.userMsg) say(e.userMsg); else { console.error(e); say('Could not create the ' + name + '. Check your connection and try again.'); } }
       finally { b.disabled = false; }
     });
   };
